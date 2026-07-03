@@ -1,0 +1,52 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{attendance-sheet}[2025/08/01 Attendance sheet for exams]
+
+\RequirePackage{array}
+\RequirePackage{tabularx}
+
+\newcommand{\attendancesheet}[2]{%
+    \clearpage
+    \thispagestyle{empty}%
+    \begin{center}
+    \large\textbf{Lista de asistencia}\\
+    #1, sección #2
+    \end{center}
+
+    Firme esta hoja para confirmar que estuvo presente en la sesión del examen y que recibió su examen en físico. Si no conoce su número de examen, revise el encabezado de la primera página de su examen.
+
+    \renewcommand{\arraystretch}{1.43}%
+    \begin{tabularx}{\textwidth}{|c|X|X|c|}
+        \hline
+        \textbf{No.} & \textbf{Nombre} & \textbf{Firma} & \textbf{No. examen} \\
+        \hline
+        1 & & & \\ \hline
+        2 & & & \\ \hline
+        3 & & & \\ \hline
+        4 & & & \\ \hline
+        5 & & & \\ \hline
+        6 & & & \\ \hline
+        7 & & & \\ \hline
+        8 & & & \\ \hline
+        9 & & & \\ \hline
+        10 & & & \\ \hline
+        11 & & & \\ \hline
+        12 & & & \\ \hline
+        13 & & & \\ \hline
+        14 & & & \\ \hline
+        15 & & & \\ \hline
+        16 & & & \\ \hline
+        17 & & & \\ \hline
+        18 & & & \\ \hline
+        19 & & & \\ \hline
+        20 & & & \\ \hline
+        21 & & & \\ \hline
+        22 & & & \\ \hline
+        23 & & & \\ \hline
+        24 & & & \\ \hline
+        25 & & & \\ \hline
+        26 & & & \\ \hline
+        27 & & & \\ \hline
+    \end{tabularx}
+}
+
+\endinput

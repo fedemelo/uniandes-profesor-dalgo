@@ -1,0 +1,58 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{programming-grid}[2025/08/01 Auto-sizing programming grids for exams by fedemelo]
+
+\RequirePackage{tikz}
+\RequirePackage{ragged2e}
+
+\newlength{\gridautoheight}
+
+% #1: extra height to reserve above the grid (0pt for plain, 1cm for named)
+\newcommand{\@gridbase}[1]{%
+    % Safety margin: one extra cell subtracted to prevent overflow from rounding errors
+    \setlength{\gridautoheight}{\dimexpr\pagegoal-\pagetotal-#1-0.5cm\relax}%
+    \pgfmathsetlength{\gridautoheight}{floor(\the\gridautoheight / 0.5cm) * 0.5cm}%
+    \nointerlineskip
+    \begingroup\setlength{\parskip}{0pt}\hfuzz=0.5pt%
+    \noindent
+    \begin{tikzpicture}
+        \def\cellsize{0.5cm}
+        \draw[step=\cellsize, gray!40, thin]
+            (0,0) grid (\textwidth, \gridautoheight);
+}
+
+\newcommand{\@gridend}{%
+    \end{tikzpicture}%
+    \endgroup
+}
+
+\newcommand{\programmingGrid}{%
+    \@gridbase{0pt}%
+    \@gridend
+}
+
+\newcommand{\namedGrid}{%
+    \@gridbase{1cm}%
+    % Filename field on top of grid
+    \draw[gray!40, thin] (0, \gridautoheight) rectangle (\textwidth, {\gridautoheight + 1cm});
+    \node[anchor=west] at (0.3cm, {\gridautoheight + 0.5cm}) {%
+        Escriba aquí el nombre del archivo: \rule{5cm}{0.4pt}\,\texttt{.py}%
+    };
+    \@gridend
+}
+
+% #1: points, #2: question text, #3: grid command to call
+\newcommand{\@gridquestionbase}[3]{%
+    \justifying
+    \setlength{\parindent}{0pt}%
+    \stepcounter{questioncounter}%
+    \vspace{1em}%
+    \noindent\textbf{Pregunta \arabic{questioncounter} (#1 décimas): }#2%
+    \par\nobreak
+    \vskip 0.5em\nobreak
+    #3%
+}
+
+\newcommand{\gridquestion}[2]{\@gridquestionbase{#1}{#2}{\programmingGrid}}
+\newcommand{\namedgridquestion}[2]{\@gridquestionbase{#1}{#2}{\namedGrid}}
+
+\endinput
