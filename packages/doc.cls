@@ -7,25 +7,39 @@
 \RequirePackage[spanish]{babel}
 \RequirePackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
 \RequirePackage{xcolor}
+\RequirePackage{amsmath}
 \RequirePackage{graphicx}
 \RequirePackage{enumitem}
 \RequirePackage{fancyhdr}
-\RequirePackage{helvet}
+\RequirePackage[scaled]{helvet}
 \RequirePackage[T1]{fontenc}
 \RequirePackage{setspace}
 \RequirePackage{ragged2e}
+\RequirePackage{csquotes}
 \RequirePackage{titlesec}
+\RequirePackage{microtype}
+\RequirePackage{menukeys}
 \RequirePackage{course-config}
-
-\renewcommand{\familydefault}{\sfdefault}
-
-\titlespacing*{\section}{0pt}{1.2em}{0.5em}
-\titlespacing*{\subsection}{0pt}{1em}{0.3em}
 
 \definecolor{docgray}{RGB}{128, 128, 128}
 
+\RequirePackage[colorlinks=true, linkcolor=docgray, urlcolor=docgray, citecolor=docgray]{hyperref}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+% Helvetica's small-caps face has generous built-in tracking; tighten it
+\SetTracking{encoding=*, shape=sc}{-40}
+
+\setcounter{secnumdepth}{0}
+
+\titleformat{\section}{\normalfont\normalsize\bfseries\scshape}{}{0pt}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries\scshape}{}{0pt}{}
+
+\titlespacing*{\section}{0pt}{1.2em}{0pt}
+\titlespacing*{\subsection}{0pt}{1em}{0pt}
+
 \newcommand{\professor}[1]{\def\@professor{#1}}
-\newcommand{\@professor}{}
+\def\@professor{}
 
 \newcommand{\makedocheader}{
     \pagestyle{plain}
@@ -45,20 +59,15 @@
         \includegraphics[width=\textwidth]{abet.png}
     \end{minipage}
 
-    \flushright
-    \@date
-
     \vspace{0.2cm}
-    \centering
+    \begin{center}
+        \textbf{\scshape\@title}
+    \end{center}
 
-    \textbf{\Large\@title}
-
-    \vspace{0.2cm}
-    \flushleft
-
-    Profesor: \@professor
-
-    \vspace{0.4cm}
+    \vspace{0.1cm}
+    \ifx\@professor\@empty\else
+        \noindent{\scshape Profesor}: \@professor
+    \fi
 }
 
 \setlist[itemize]{
