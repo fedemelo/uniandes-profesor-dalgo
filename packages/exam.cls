@@ -14,7 +14,7 @@
 \RequirePackage{amsmath}
 \RequirePackage{amsfonts}
 \RequirePackage{fancyhdr}
-\RequirePackage{helvet}
+\RequirePackage[scaled]{helvet}
 \RequirePackage[T1]{fontenc}
 \RequirePackage{setspace}
 \RequirePackage{ragged2e}
