@@ -1,0 +1,32 @@
+% !TeX spellcheck = es_ANY
+\documentclass{doc}
+
+\usepackage[style=alphabetic, backend=biber]{biblatex}
+\addbibresource{math-docs/referencias.bib}
+
+% Use full 4-digit years in labels (e.g. [Cor2009]) instead of the default 2-digit ones
+\DeclareLabelalphaTemplate{
+  \labelelement{
+    \field[final]{shorthand}
+    \field{label}
+    \field[strwidth=3,strside=left,ifnames=1]{labelname}
+    \field[strwidth=1,strside=left]{labelname}
+  }
+  \labelelement{
+    \field[strwidth=4,strside=right]{year}
+  }
+}
+
+\title{Construcción de documentos con contenido matemático}
+\professor{Federico Melo Barrero}
+
+\begin{document}
+\makedocheader
+
+\input{math-docs/convenciones-matematicas}
+\input{math-docs/latex}
+\input{math-docs/alternativas}
+
+\printbibliography
+
+\end{document}
