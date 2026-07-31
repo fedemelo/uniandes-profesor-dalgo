@@ -6,15 +6,31 @@ export TEXINPUTS
 
 TEX=pdflatex -shell-escape
 
-.PHONY: policies
+.PHONY: policies consejos math-docs latex-intro
 
 policies:
-	$(TEX) policies/policies.tex
+	$(TEX) -output-directory=policies policies/policies.tex
+
+consejos:
+	$(TEX) -output-directory=announcements announcements/consejos.tex
+
+math-docs:
+	$(TEX) -output-directory=math-docs math-docs/math-docs.tex
+	biber math-docs/math-docs
+	$(TEX) -output-directory=math-docs math-docs/math-docs.tex
+	$(TEX) -output-directory=math-docs math-docs/math-docs.tex
+
+latex-intro:
+	$(TEX) -output-directory=latex-intro latex-intro/latex-intro.tex
+	biber latex-intro/latex-intro
+	$(TEX) -output-directory=latex-intro latex-intro/latex-intro.tex
+	$(TEX) -output-directory=latex-intro latex-intro/latex-intro.tex
 
 clean:  # Remove all temporary files
 	find . \
 	\( \
 		-name "*.aux" -o \
+		-name "*.bcf" -o \
 		-name "*.log" -o \
 		-name "*.out" -o \
 		-name "*.toc" -o \
