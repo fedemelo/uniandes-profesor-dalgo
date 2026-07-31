@@ -6,10 +6,13 @@ export TEXINPUTS
 
 TEX=pdflatex -shell-escape
 
-.PHONY: policies consejos math-docs latex-intro
+.PHONY: policies consejos math-docs latex-intro grupos
 
 policies:
 	$(TEX) -output-directory=policies policies/policies.tex
+
+grupos:
+	$(TEX) -output-directory=grupos grupos/grupos.tex
 
 consejos:
 	$(TEX) -output-directory=announcements announcements/consejos.tex
