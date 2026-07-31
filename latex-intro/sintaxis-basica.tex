@@ -1,0 +1,82 @@
+\section{Sintaxis básica}
+\LaTeX{} usa un lenguaje de etiquetas para describir la estructura de un documento y su presentación. Cada etiqueta tiene uno de dos formatos:
+
+\begin{itemize}
+    \item Comienza con \inline{\textbackslash} y después un nombre en letras: \inline{\textbackslash emph\{Texto\}}.
+    \item Comienza con \inline{\textbackslash} y después un solo carácter no alfabético: \inline{\textbackslash\$}.
+\end{itemize}
+
+Sumado a eso, utiliza \emph{ambientes}. La sintaxis para los ambientes es:
+
+\begin{pseudocode}
+\relax\begin{nombre de ambiente}
+Cuerpo: texto u otro ambiente.
+\end{nombre de ambiente}
+\end{pseudocode}
+
+E.g., el ambiente \inline{itemize}, que permite generar una lista de viñetas:
+
+\begin{pseudocode}
+\relax\begin{itemize}
+    \item Texto 1
+    \item Texto 2
+\end{itemize}
+\end{pseudocode}
+
+El resultado del anterior código al ser compilado es el siguiente:
+
+\begin{itemize}
+    \item Texto 1
+    \item Texto 2
+\end{itemize}
+
+Otros ambientes interesantes son \inline{equation} y \inline{tabular}, los cuales permiten generar ecuaciones y tablas, respectivamente.
+
+Un ejemplo del uso de \inline{equation} es:
+
+\begin{pseudocode}
+\relax\begin{equation}
+x=y+1
+\end{equation}
+\end{pseudocode}
+
+Lo cual produce el siguiente texto:
+
+\begin{equation}
+x=y+1
+\end{equation}
+
+Por su parte, un ejemplo de generación de tablas es:
+
+\begin{pseudocode}
+\relax\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Texto 1 & Texto 2 \\ \midrule
+Texto 3 & Texto 4 \\
+Texto 5 & Texto 6 \\ \bottomrule
+\end{tabular}
+\end{center}
+\end{pseudocode}
+
+Lo cual genera la siguiente tabla:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Texto 1 & Texto 2 \\ \midrule
+Texto 3 & Texto 4 \\
+Texto 5 & Texto 6 \\ \bottomrule
+\end{tabular}
+\end{center}
+
+Para que un documento compile, todo su contenido debe estar dentro del ambiente \inline{document}. Todo lo que esté antes de \inline{\textbackslash begin\{document\}} se conoce como el \emph{preámbulo}: ahí se declara la clase del documento con \inline{\textbackslash documentclass} y se importan los paquetes que se vayan a usar, mediante \inline{\textbackslash usepackage}.
+
+Un ejemplo que permite generar un documento simple es:
+
+\begin{pseudocode}
+\relax\documentclass{article}
+\begin{document}
+Hola Mundo!
+\end{document}
+\end{pseudocode}
