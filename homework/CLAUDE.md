@@ -37,3 +37,21 @@ Create `problemas/nombre-kebab/enunciado.tex` and `solucion.tex`, then append th
 Every problem that asks for an implementation expects a classic algorithmic-judge submission: the program reads from standard input and writes to standard output — no function signatures, no file I/O. One program per problem, delivered as its own source file (never embedded in the statement or solution `.tex`).
 
 This is the baseline for every problem's "qué se debe entregar" section. A problem may ask for additional deliverables on top of it (a proof, a complexity analysis, a written justification, etc.) — those are decided per problem and aren't part of this baseline.
+
+### Input/output contract
+
+Accepted languages: Python, Java, C++, JavaScript. Every problem statement's "Entrada"/"Salida" section should specify, precisely and unambiguously:
+
+- **Entrada**: the first line gives the number of test cases; the format of each test case is defined by the problem.
+- **Salida**: one line of output per test case, in the format the problem defines.
+
+Each statement should also show how the grader invokes the solution, one line per accepted language, via shell redirection — never by passing the input as a command-line argument or opening files from within the program:
+
+```
+java Problema<Id> < entrada.in > salida.out
+python problema<id>.py < entrada.in > salida.out
+./problema<id> < entrada.in > salida.out     # C++, previously compiled
+node problema<id>.js < entrada.in > salida.out
+```
+
+`<Id>`/`<id>` is the problem's identifier (e.g. `P0`), matched to the program's file/class name. Don't explain what `<`/`>` redirection means in the statement — that belongs to the students' setup docs, not to each problem.
