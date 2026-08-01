@@ -54,4 +54,4 @@ python problema<id>.py < entrada.in > salida.out
 node problema<id>.js < entrada.in > salida.out
 ```
 
-`<Id>`/`<id>` is the problem's identifier (e.g. `P0`), matched to the program's file/class name. Don't explain what `<`/`>` redirection means in the statement — that belongs to the students' setup docs, not to each problem.
+`<Id>`/`<id>` is the problem's identifier (e.g. `P0`), matched to the program's file/class name. Don't explain what `<`/`>` redirection means in the statement — that's covered once, for students, in `course-docs/entrada-salida` (built with `make entrada-salida`), which also has the worked Problema P0 example this convention is based on.
