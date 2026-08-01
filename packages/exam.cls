@@ -60,7 +60,7 @@
 
 \newcommand{\makeexamheader}{
     \begin{minipage}[T]{0.25\textwidth}
-        \includegraphics[width=\textwidth]{inge-uniandes.png}
+        \includegraphics[width=0.84\textwidth]{inge-uniandes.pdf}
     \end{minipage}%
     \hfill
     \begin{minipage}[T]{0.45\textwidth}
