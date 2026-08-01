@@ -5,15 +5,15 @@ Each homework lives in `homework/N-nombre-kebab/` (N = 1-7) and contains:
 - `N-nombre-kebab.tex` — assignment driver (statement only)
 - `N-nombre-kebab-solucion.tex` — solution driver (statement + solution)
 - `problemas.tex` — the single ordered list of `\input`s for that homework's problems, `\input` by both drivers
-- `problemas/M-nombre-problema/enunciado.tex` — problem M's statement
-- `problemas/M-nombre-problema/solucion.tex` — problem M's solution
+- `problemas/nombre-kebab/enunciado.tex` — one problem's statement
+- `problemas/nombre-kebab/solucion.tex` — that problem's solution
 
-`problemas.tex` is the only place the problem list/order is written. Each entry looks like:
+Problem directories are named descriptively (kebab-case, no number prefix) — `problemas.tex` is the only place the problem order is written. Each entry looks like:
 
 ```latex
-\input{homework/N-nombre-kebab/problemas/M-nombre-problema/enunciado}
+\input{homework/N-nombre-kebab/problemas/nombre-kebab/enunciado}
 \ifsolucion
-    \input{homework/N-nombre-kebab/problemas/M-nombre-problema/solucion}
+    \input{homework/N-nombre-kebab/problemas/nombre-kebab/solucion}
 \fi
 ```
 
@@ -30,4 +30,10 @@ Both drivers set `\title`, `\professor`, `\dateout`, `\duedate` (all from `doc.c
 
 ## Adding a problem
 
-Create `problemas/M-nombre-problema/enunciado.tex` and `solucion.tex`, then append the two-line `\input`/`\ifsolucion` pair above to that homework's `problemas.tex`.
+Create `problemas/nombre-kebab/enunciado.tex` and `solucion.tex`, then append the two-line `\input`/`\ifsolucion` pair above to that homework's `problemas.tex`.
+
+## What every problem requires
+
+Every problem that asks for an implementation expects a classic algorithmic-judge submission: the program reads from standard input and writes to standard output — no function signatures, no file I/O. One program per problem, delivered as its own source file (never embedded in the statement or solution `.tex`).
+
+This is the baseline for every problem's "qué se debe entregar" section. A problem may ask for additional deliverables on top of it (a proof, a complexity analysis, a written justification, etc.) — those are decided per problem and aren't part of this baseline.
