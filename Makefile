@@ -6,28 +6,49 @@ export TEXINPUTS
 
 TEX=pdflatex -shell-escape
 
-.PHONY: policies consejos math-docs latex-intro grupos
+.PHONY: policies consejos math-docs latex-intro grupos home1 home2 home3 home4 home5 home6 home7
 
 policies:
-	$(TEX) -output-directory=policies policies/policies.tex
+	$(TEX) -output-directory=course-docs/policies course-docs/policies/policies.tex
 
 grupos:
-	$(TEX) -output-directory=grupos grupos/grupos.tex
+	$(TEX) -output-directory=course-docs/grupos course-docs/grupos/grupos.tex
 
 consejos:
 	$(TEX) -output-directory=announcements announcements/consejos.tex
 
 math-docs:
-	$(TEX) -output-directory=math-docs math-docs/math-docs.tex
-	biber math-docs/math-docs
-	$(TEX) -output-directory=math-docs math-docs/math-docs.tex
-	$(TEX) -output-directory=math-docs math-docs/math-docs.tex
+	$(TEX) -output-directory=course-docs/math-docs course-docs/math-docs/math-docs.tex
+	biber course-docs/math-docs/math-docs
+	$(TEX) -output-directory=course-docs/math-docs course-docs/math-docs/math-docs.tex
+	$(TEX) -output-directory=course-docs/math-docs course-docs/math-docs/math-docs.tex
 
 latex-intro:
-	$(TEX) -output-directory=latex-intro latex-intro/latex-intro.tex
-	biber latex-intro/latex-intro
-	$(TEX) -output-directory=latex-intro latex-intro/latex-intro.tex
-	$(TEX) -output-directory=latex-intro latex-intro/latex-intro.tex
+	$(TEX) -output-directory=course-docs/latex-intro course-docs/latex-intro/latex-intro.tex
+	biber course-docs/latex-intro/latex-intro
+	$(TEX) -output-directory=course-docs/latex-intro course-docs/latex-intro/latex-intro.tex
+	$(TEX) -output-directory=course-docs/latex-intro course-docs/latex-intro/latex-intro.tex
+
+home1:
+	$(TEX) -output-directory=homework/1-recursion-y-dividir-y-conquistar homework/1-recursion-y-dividir-y-conquistar/1-recursion-y-dividir-y-conquistar.tex
+
+home2:
+	$(TEX) -output-directory=homework/2-programacion-dinamica-i homework/2-programacion-dinamica-i/2-programacion-dinamica-i.tex
+
+home3:
+	$(TEX) -output-directory=homework/3-programacion-dinamica-ii homework/3-programacion-dinamica-ii/3-programacion-dinamica-ii.tex
+
+home4:
+	$(TEX) -output-directory=homework/4-grafos homework/4-grafos/4-grafos.tex
+
+home5:
+	$(TEX) -output-directory=homework/5-intratabilidad homework/5-intratabilidad/5-intratabilidad.tex
+
+home6:
+	$(TEX) -output-directory=homework/6-algoritmos-aproximados homework/6-algoritmos-aproximados/6-algoritmos-aproximados.tex
+
+home7:
+	$(TEX) -output-directory=homework/7-algoritmos-aleatorios homework/7-algoritmos-aleatorios/7-algoritmos-aleatorios.tex
 
 clean:  # Remove all temporary files
 	find . \
