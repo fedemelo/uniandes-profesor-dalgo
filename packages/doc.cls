@@ -41,6 +41,12 @@
 \newcommand{\professor}[1]{\def\@professor{#1}}
 \def\@professor{}
 
+\newcommand{\dateout}[1]{\def\@dateout{#1}}
+\def\@dateout{}
+
+\newcommand{\duedate}[1]{\def\@duedate{#1}}
+\def\@duedate{}
+
 \newcommand{\makedocheader}{
     \pagestyle{plain}
 
@@ -65,8 +71,15 @@
     \end{center}
 
     \vspace{0.1cm}
+    \noindent
     \ifx\@professor\@empty\else
-        \noindent{\scshape Profesor}: \@professor
+        {\scshape Profesor}: \@professor\par
+    \fi
+    \ifx\@dateout\@empty\else
+        {\scshape Fecha de asignación}: \@dateout\par
+    \fi
+    \ifx\@duedate\@empty\else
+        {\scshape Fecha máxima de entrega}: \@duedate\par
     \fi
 }
 
