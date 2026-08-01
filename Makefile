@@ -29,6 +29,8 @@ latex-intro:
 	$(TEX) -output-directory=course-docs/latex-intro course-docs/latex-intro/latex-intro.tex
 	$(TEX) -output-directory=course-docs/latex-intro course-docs/latex-intro/latex-intro.tex
 
+course-docs: policies consejos math-docs latex-intro grupos
+
 home1:
 	$(TEX) -output-directory=homework/1-recursion-y-dividir-y-conquistar homework/1-recursion-y-dividir-y-conquistar/1-recursion-y-dividir-y-conquistar.tex
 
@@ -49,6 +51,8 @@ home6:
 
 home7:
 	$(TEX) -output-directory=homework/7-algoritmos-aleatorios homework/7-algoritmos-aleatorios/7-algoritmos-aleatorios.tex
+
+make homeworks: home1 home2 home3 home4 home5 home6 home7
 
 clean:  # Remove all temporary files
 	find . \
