@@ -47,6 +47,9 @@
 \newcommand{\duedate}[1]{\def\@duedate{#1}}
 \def\@duedate{}
 
+\newif\ifsolucion
+\solucionfalse
+
 \newcommand{\makedocheader}{
     \pagestyle{plain}
 
