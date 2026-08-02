@@ -29,8 +29,9 @@ DOC_DIR_consejos       := announcements
 DOC_DIR_math-docs      := course-docs/math-docs
 DOC_DIR_latex-intro    := course-docs/latex-intro
 DOC_DIR_entrada-salida := course-docs/entrada-salida
+DOC_DIR_cronograma     := course-docs/cronograma
 
-SIMPLE_DOCS := policies grupos consejos entrada-salida
+SIMPLE_DOCS := policies grupos consejos entrada-salida cronograma
 BIBER_DOCS  := math-docs latex-intro
 
 # homework/N-slug/ -> N, derived from each directory's numeric prefix

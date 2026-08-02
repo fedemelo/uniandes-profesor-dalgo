@@ -1,0 +1,79 @@
+% !TeX spellcheck = es_ANY
+\documentclass{doc}
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+
+\definecolor{festivo}{RGB}{204, 0, 0}
+\definecolor{hito}{RGB}{0, 128, 0}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{Cronograma}
+\professor{Federico Melo Barrero}
+
+\begin{document}
+\makedocheader
+
+\footnotesize
+\begin{longtable}{@{} l l l L{2.1cm} L{3cm} L{3.1cm} L{2.7cm} @{}}
+\toprule
+\textbf{Sem} & & \textbf{Fecha} & \textbf{Tema} & \textbf{Subtema} & \textbf{Referencias} & \textbf{Entregas} \\
+\midrule
+\endhead
+
+1  & Lu & ago 03 & & Presentación del curso & & \\
+   & Mi & ago 05 & Dividir y conquistar & Dividir y conquistar & [Cor2009] 4.1--4.2; [Boh1992] 3 & \\
+\midrule
+2  & Lu & ago 10 & & Dividir y conquistar & & \\
+   & Mi & ago 12 & Programación dinámica & Programación dinámica & \textbf{[Cor2009] 15}; [Boh1992] 4 & \\
+\midrule
+3  & Lu & ago 17 & & \textcolor{festivo}{Festivo} & & \\
+   & Mi & ago 19 & & Programación dinámica & [Cor2009] 15; [Boh1992] 4 & \\
+\midrule
+4  & Lu & ago 24 & Programación dinámica & Programación dinámica & [Cor2009] 15; [Boh1992] 4 & \\
+   & Mi & ago 26 & & Programación dinámica & [Cor2009] 15; [Boh1992] 4 & \\
+\midrule
+5  & Lu & ago 31 & Búsqueda en grafos & Búsqueda en grafos -- BFS/DFS & [Cor2009] 22 & \\
+   & Mi & sep 02 & & Búsqueda en grafos -- BFS/DFS & & \\
+\midrule
+6  & Lu & sep 07 & Ruta óptima & Conceptos básicos & [Cor2009] 24.1--24.3 & \\
+   & Mi & sep 09 & & Floyd--Warshall & [Cor2009] 25.1--25.2; [Boh1992] 5 & \\
+\midrule
+7  & Lu & sep 14 & & \textcolor{hito}{Repaso, Entrega 1 proyecto} & & \\
+   & Mi & sep 16 & & \textcolor{hito}{\textbf{Parcial 1}} & & \\
+\midrule
+8  & Lu & sep 21 & Algoritmos ávaros & Árboles de recubrimiento & [Cor2009] 23 & \\
+   & Mi & sep 23 & & Kruskal / Union--Find & \textbf{[Cor2009] 21.1--21.3} & \\
+\midrule
+   & Lu & sep 28 & & \textcolor{festivo}{RECESO} & & \\
+   & Mi & sep 30 & & \textcolor{festivo}{RECESO} & & \\
+\midrule
+9  & Lu & oct 05 & Intratabilidad & Nociones básicas & \textbf{[Cor2009] 34.1--34.2}; [Boh1992] 8 & \\
+   & Mi & oct 07 & & Nociones básicas & [Cor2009] 34.3 & \\
+\midrule
+10 & Lu & oct 12 & & \textcolor{festivo}{Festivo} & & \\
+   & Mi & oct 14 & & Problemas NP--completos & \textbf{[Cor2009] 34.4--34.5} & \\
+\midrule
+11 & Lu & oct 19 & & Problemas NP--completos & & \\
+   & Mi & oct 21 & & Exploración de grafos de estados & [Boh1992] 7 & \\
+\midrule
+12 & Lu & oct 26 & & \textcolor{hito}{Repaso, Entrega 2 proyecto} & & \\
+   & Mi & oct 28 & & \textcolor{hito}{\textbf{Parcial 2}} & & \\
+\midrule
+13 & Lu & nov 02 & & \textcolor{festivo}{Festivo} & & \\
+   & Mi & nov 04 & Algoritmos aproximados & Algoritmos aproximados & [Cor2009] 35.1--35.3 & \\
+\midrule
+14 & Lu & nov 09 & & Algoritmos aproximados & & \\
+   & Mi & nov 11 & & Algoritmos aproximados & & \\
+\midrule
+15 & Lu & nov 16 & & \textcolor{festivo}{Festivo} & & \\
+   & Mi & nov 18 & Algoritmos aleatorios & Nociones básicas & \textbf{[Cor2009] 5.1--5.3} & \\
+\midrule
+16 & Lu & nov 23 & & Algoritmos aleatorios & [Cor2009] 35.4; [Kle2014] 13 & \\
+   & Mi & nov 25 & & Algoritmos aleatorios & & \\
+\bottomrule
+\end{longtable}
+
+\end{document}
