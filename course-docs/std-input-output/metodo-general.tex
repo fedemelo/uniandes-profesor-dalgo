@@ -1,0 +1,42 @@
+\section{Cómo funcionan la entrada y la salida estándar}
+Todo programa que escriba para este curso debe leer desde la entrada estándar (\textit{standard input}) y escribir en la salida estándar (\textit{standard output}). No debe recibir argumentos por línea de comandos ni consultar fuentes externas.
+
+\subsection{Formato de los archivos de entrada y salida}
+
+Por convención, las entradas se escriben en un archivo de texto plano con extensión \inline{.in} y las salidas en uno con extensión \inline{.out}.
+
+La estructura general del archivo de entrada es uniforme: la primera línea contiene un entero $T$, la cantidad de casos de prueba. A continuación siguen $T$ bloques, uno por caso de prueba, cuyo formato específico está definido en cada problema. El archivo de salida debe tener una respuesta para cada uno de los \(T\) casos, en el orden en el que están en el archivo de entrada, siguiendo el formato especificado por el problema.
+
+Los calificadores de las soluciones son automáticos; en caso de que se transgreda el formato de entrada y salida, se otorgará a la implementación un puntaje de 0.
+
+\subsection{Redirección y ejecución}
+
+Para probar su programa en la consola, \texttt{<} redirige el contenido de un archivo hacia la entrada estándar y \texttt{>} redirige la salida estándar hacia un archivo.
+
+Supóngase una implementación en un archivo llamado \texttt{solution}, con los casos de prueba en \texttt{input.in} y la salida esperada en \texttt{output.out}:
+
+\textbf{Python}
+\begin{pseudocode}
+python solution.py < input.in > output.out
+\end{pseudocode}
+
+\textbf{Java}
+
+Tras compilar el código (e.g. \texttt{javac solution.java}):
+\begin{pseudocode}
+java solution < input.in > output.out
+\end{pseudocode}
+
+\textbf{C++}
+
+Tras compilar el código (e.g. \texttt{g++ solution.cpp -o solution}):
+\begin{pseudocode}
+./solution < input.in > output.out
+\end{pseudocode}
+
+\textbf{JavaScript}
+\begin{pseudocode}
+node solution.js < input.in > output.out
+\end{pseudocode}
+
+Redirigir un archivo de entrada no es estrictamente necesario; también se pueden digitar los casos de prueba a mano en la consola (el programa se queda esperando la entrada estándar, tal como cuando se ejecuta sin \texttt{<}). Sin embargo, para probar varios casos o casos grandes, lo más cómodo es usar redirección.
