@@ -6,78 +6,60 @@ export TEXINPUTS
 
 TEX=pdflatex -shell-escape
 
-.PHONY: policies consejos math-docs latex-intro grupos course-docs \
-	home1 home2 home3 home4 home5 home6 home7 homeworks \
-	sol1 sol2 sol3 sol4 sol5 sol6 sol7 soluciones
+# Compiles $(2).tex in directory $(1), then renames the resulting PDF
+# to match the document's \title, so no manual copy-and-rename is needed.
+define compile
+	$(TEX) -output-directory=$(1) $(1)/$(2).tex
+	title=$$(sed -n 's/^\\title{\(.*\)}$$/\1/p' $(1)/$(2).tex | sed -e 's/\\LaTeX{}/LaTeX/g' -e 's/\\\\//g'); \
+	mv "$(1)/$(2).pdf" "$(1)/$$title.pdf"
+endef
 
-policies:
-	$(TEX) -output-directory=course-docs/policies course-docs/policies/policies.tex
+# Same as compile, but resolves a bibliography (biber) first.
+define biber_compile
+	$(TEX) -output-directory=$(1) $(1)/$(2).tex
+	biber $(1)/$(2)
+	$(TEX) -output-directory=$(1) $(1)/$(2).tex
+	$(call compile,$(1),$(2))
+endef
 
-grupos:
-	$(TEX) -output-directory=course-docs/grupos course-docs/grupos/grupos.tex
+# course-docs / announcements: target name -> directory holding its .tex
+DOC_DIR_policies       := course-docs/policies
+DOC_DIR_grupos         := course-docs/grupos
+DOC_DIR_consejos       := announcements
+DOC_DIR_math-docs      := course-docs/math-docs
+DOC_DIR_latex-intro    := course-docs/latex-intro
+DOC_DIR_entrada-salida := course-docs/entrada-salida
 
-consejos:
-	$(TEX) -output-directory=announcements announcements/consejos.tex
+SIMPLE_DOCS := policies grupos consejos entrada-salida
+BIBER_DOCS  := math-docs latex-intro
 
-math-docs:
-	$(TEX) -output-directory=course-docs/math-docs course-docs/math-docs/math-docs.tex
-	biber course-docs/math-docs/math-docs
-	$(TEX) -output-directory=course-docs/math-docs course-docs/math-docs/math-docs.tex
-	$(TEX) -output-directory=course-docs/math-docs course-docs/math-docs/math-docs.tex
+# homework/N-slug/ -> N, derived from each directory's numeric prefix
+HOMEWORK_DIRS := $(sort $(shell find homework -mindepth 1 -maxdepth 1 -type d))
+HOMEWORK_NUMS := $(foreach d,$(HOMEWORK_DIRS),$(word 1,$(subst -, ,$(notdir $(d)))))
+$(foreach d,$(HOMEWORK_DIRS),$(eval HOMEWORK_DIR_$(word 1,$(subst -, ,$(notdir $(d)))) := $(d)))
 
-latex-intro:
-	$(TEX) -output-directory=course-docs/latex-intro course-docs/latex-intro/latex-intro.tex
-	biber course-docs/latex-intro/latex-intro
-	$(TEX) -output-directory=course-docs/latex-intro course-docs/latex-intro/latex-intro.tex
-	$(TEX) -output-directory=course-docs/latex-intro course-docs/latex-intro/latex-intro.tex
+# home1..homeN/sol1..solN are deliberately left out: listing them here
+# would give each an empty explicit rule that shadows the home%/sol%
+# pattern rules below, since they'd never gain a recipe of their own.
+.PHONY: course-docs homeworks soluciones $(SIMPLE_DOCS) $(BIBER_DOCS)
 
-course-docs: policies consejos math-docs latex-intro grupos
+$(SIMPLE_DOCS):
+	$(call compile,$(DOC_DIR_$@),$@)
 
-home1:
-	$(TEX) -output-directory=homework/1-recursion-y-dividir-y-conquistar homework/1-recursion-y-dividir-y-conquistar/1-recursion-y-dividir-y-conquistar.tex
+$(BIBER_DOCS):
+	$(call biber_compile,$(DOC_DIR_$@),$@)
 
-home2:
-	$(TEX) -output-directory=homework/2-programacion-dinamica-i homework/2-programacion-dinamica-i/2-programacion-dinamica-i.tex
+course-docs: $(SIMPLE_DOCS) $(BIBER_DOCS)
 
-home3:
-	$(TEX) -output-directory=homework/3-programacion-dinamica-ii homework/3-programacion-dinamica-ii/3-programacion-dinamica-ii.tex
+home%:
+	$(call compile,$(HOMEWORK_DIR_$*),$(notdir $(HOMEWORK_DIR_$*)))
 
-home4:
-	$(TEX) -output-directory=homework/4-grafos homework/4-grafos/4-grafos.tex
+sol%:
+	$(call compile,$(HOMEWORK_DIR_$*),$(notdir $(HOMEWORK_DIR_$*))-solucion)
 
-home5:
-	$(TEX) -output-directory=homework/5-intratabilidad homework/5-intratabilidad/5-intratabilidad.tex
+homeworks: $(addprefix home,$(HOMEWORK_NUMS))
 
-home6:
-	$(TEX) -output-directory=homework/6-algoritmos-aproximados homework/6-algoritmos-aproximados/6-algoritmos-aproximados.tex
-
-home7:
-	$(TEX) -output-directory=homework/7-algoritmos-aleatorios homework/7-algoritmos-aleatorios/7-algoritmos-aleatorios.tex
-
-homeworks: home1 home2 home3 home4 home5 home6 home7
-
-sol1:
-	$(TEX) -output-directory=homework/1-recursion-y-dividir-y-conquistar homework/1-recursion-y-dividir-y-conquistar/1-recursion-y-dividir-y-conquistar-solucion.tex
-
-sol2:
-	$(TEX) -output-directory=homework/2-programacion-dinamica-i homework/2-programacion-dinamica-i/2-programacion-dinamica-i-solucion.tex
-
-sol3:
-	$(TEX) -output-directory=homework/3-programacion-dinamica-ii homework/3-programacion-dinamica-ii/3-programacion-dinamica-ii-solucion.tex
-
-sol4:
-	$(TEX) -output-directory=homework/4-grafos homework/4-grafos/4-grafos-solucion.tex
-
-sol5:
-	$(TEX) -output-directory=homework/5-intratabilidad homework/5-intratabilidad/5-intratabilidad-solucion.tex
-
-sol6:
-	$(TEX) -output-directory=homework/6-algoritmos-aproximados homework/6-algoritmos-aproximados/6-algoritmos-aproximados-solucion.tex
-
-sol7:
-	$(TEX) -output-directory=homework/7-algoritmos-aleatorios homework/7-algoritmos-aleatorios/7-algoritmos-aleatorios-solucion.tex
-
-soluciones: sol1 sol2 sol3 sol4 sol5 sol6 sol7
+soluciones: $(addprefix sol,$(HOMEWORK_NUMS))
 
 clean:  # Remove all temporary files
 	find . \
