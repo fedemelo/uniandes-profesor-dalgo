@@ -20,6 +20,11 @@
 \RequirePackage{microtype}
 \RequirePackage{menukeys}
 \RequirePackage{course-config}
+\RequirePackage{dirtytalk}
+\RequirePackage{amssymb}  % Symbols and fonts. Includes amsfonts.
+\RequirePackage{amsthm}  % Theorem setups with \theoremstyle, \proof and \qedsymbol.
+\RequirePackage{mathtools}  % amsmath package extension with bug fixes. Includes amsmath, which includes amsbsy (\boldsymbol and fake boldface \pmb), amsopn (operator names with \DeclareMathOperator) and amstext (text in mathmode with \text).
+\RequirePackage{forest}  % Draw trees
 
 \definecolor{docgray}{RGB}{128, 128, 128}
 
