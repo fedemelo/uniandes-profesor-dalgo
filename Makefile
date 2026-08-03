@@ -6,20 +6,21 @@ export TEXINPUTS
 
 TEX=pdflatex -shell-escape
 
-# Compiles $(2).tex in directory $(1), then renames the resulting PDF
-# to match the document's \title, so no manual copy-and-rename is needed.
+# Compiles $(3).tex, found in source directory $(1), into output directory
+# $(2), then renames the resulting PDF to match the document's \title, so
+# no manual copy-and-rename is needed. $(1) and $(2) may be the same dir.
 define compile
-	$(TEX) -output-directory=$(1) $(1)/$(2).tex
-	title=$$(sed -n 's/^\\title{\(.*\)}$$/\1/p' $(1)/$(2).tex | sed -e 's/\\LaTeX{}/LaTeX/g' -e 's/\\\\//g'); \
-	mv "$(1)/$(2).pdf" "$(1)/$$title.pdf"
+	$(TEX) -output-directory=$(2) $(1)/$(3).tex
+	title=$$(sed -n 's/^\\title{\(.*\)}$$/\1/p' $(1)/$(3).tex | sed -e 's/\\LaTeX{}/LaTeX/g' -e 's/\\\\//g' -e 's/: / - /g'); \
+	mv "$(2)/$(3).pdf" "$(2)/$$title.pdf"
 endef
 
 # Same as compile, but resolves a bibliography (biber) first.
 define biber_compile
-	$(TEX) -output-directory=$(1) $(1)/$(2).tex
-	biber $(1)/$(2)
-	$(TEX) -output-directory=$(1) $(1)/$(2).tex
-	$(call compile,$(1),$(2))
+	$(TEX) -output-directory=$(2) $(1)/$(3).tex
+	biber $(2)/$(3)
+	$(TEX) -output-directory=$(2) $(1)/$(3).tex
+	$(call compile,$(1),$(2),$(3))
 endef
 
 # course-docs / announcements: target name -> directory holding its .tex
@@ -29,9 +30,8 @@ DOC_DIR_consejos         := announcements
 DOC_DIR_math-docs        := course-docs/math-docs
 DOC_DIR_latex-intro      := course-docs/latex-intro
 DOC_DIR_std-input-output := course-docs/std-input-output
-DOC_DIR_cronograma       := course-docs/cronograma
 
-SIMPLE_DOCS := policies grupos consejos std-input-output cronograma
+SIMPLE_DOCS := policies grupos consejos std-input-output
 BIBER_DOCS  := math-docs latex-intro
 
 # homework/N-slug/ -> N, derived from each directory's numeric prefix
@@ -39,28 +39,31 @@ HOMEWORK_DIRS := $(sort $(shell find homework -mindepth 1 -maxdepth 1 -type d))
 HOMEWORK_NUMS := $(foreach d,$(HOMEWORK_DIRS),$(word 1,$(subst -, ,$(notdir $(d)))))
 $(foreach d,$(HOMEWORK_DIRS),$(eval HOMEWORK_DIR_$(word 1,$(subst -, ,$(notdir $(d)))) := $(d)))
 
-# home1..homeN/sol1..solN are deliberately left out: listing them here
-# would give each an empty explicit rule that shadows the home%/sol%
-# pattern rules below, since they'd never gain a recipe of their own.
-.PHONY: course-docs homeworks soluciones $(SIMPLE_DOCS) $(BIBER_DOCS)
+# hw1..hwN are deliberately left out: listing them here would give each
+# an empty explicit rule that shadows the hw% pattern rule below, since
+# they'd never gain a recipe of their own.
+.PHONY: course-docs all-hw $(SIMPLE_DOCS) $(BIBER_DOCS)
 
 $(SIMPLE_DOCS):
-	$(call compile,$(DOC_DIR_$@),$@)
+	$(call compile,$(DOC_DIR_$@),$(DOC_DIR_$@),$@)
 
 $(BIBER_DOCS):
-	$(call biber_compile,$(DOC_DIR_$@),$@)
+	$(call biber_compile,$(DOC_DIR_$@),$(DOC_DIR_$@),$@)
 
 course-docs: $(SIMPLE_DOCS) $(BIBER_DOCS)
 
-home%:
-	$(call compile,$(HOMEWORK_DIR_$*),$(notdir $(HOMEWORK_DIR_$*)))
+# Homeworks migrated to the tex/tarea + tex/solucion layout keep their
+# driver there; PDFs still land at the homework's root regardless. Those
+# not yet migrated fall back to the flat layout (driver at the root too).
+homework_tarea_src   = $(if $(wildcard $(1)/tex/tarea),$(1)/tex/tarea,$(1))
+homework_solucion_src = $(if $(wildcard $(1)/tex/solucion),$(1)/tex/solucion,$(1))
 
-sol%:
-	$(call compile,$(HOMEWORK_DIR_$*),$(notdir $(HOMEWORK_DIR_$*))-solucion)
+hw%:
+	$(call compile,$(call homework_tarea_src,$(HOMEWORK_DIR_$*)),$(HOMEWORK_DIR_$*),$(notdir $(HOMEWORK_DIR_$*)))
+	$(call compile,$(call homework_solucion_src,$(HOMEWORK_DIR_$*)),$(HOMEWORK_DIR_$*),$(notdir $(HOMEWORK_DIR_$*))-solucion)
 
-homeworks: $(addprefix home,$(HOMEWORK_NUMS))
-
-soluciones: $(addprefix sol,$(HOMEWORK_NUMS))
+all-hw:
+	$(foreach n,$(HOMEWORK_NUMS),$(MAKE) hw$(n);)
 
 clean:  # Remove all temporary files
 	find . \
