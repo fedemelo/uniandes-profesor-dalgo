@@ -1,0 +1,58 @@
+\begin{enumerate}
+  \item Se puede tomar como base la implementación de merge sort. \\
+  
+  En el paso de combinar, se comparan los elementos de la mitad izquierda con los de la mitad derecha. Todo elemento en la mitad de la derecha que sea menor que algún elemento en la mitad izquierda, ¡forma al menos un par invertido! Ahí es donde hay que añadir el conteo. \\
+  
+  Pero, ¿cuántos pares? Como ambas mitades vienen ordenadas, entonces si un elemento de la mitad derecha es menor que alguno de la izquierda, también es menor que todo el resto de la mitad izquierda que le siguen a ese. O sea: \inline{len(left) - l} pares invertidos. \\
+
+  Esa es la modificación, aunado a pasar la variable que tiene el conteo por todos los llamados de funciones.
+
+  \pagebreak
+
+  \item Implementación en Python:
+
+\begin{pseudocode}
+def count_inverted_pairs(canciones: list[int]) -> int:
+    return count_inverted_pairs_aux(canciones, 0, len(canciones)-1)
+
+
+def count_inverted_pairs_aux(songs: list[int], lo: int, hi: int) -> int:
+    if lo >= hi: return 0
+
+    mid = lo + (hi - lo) // 2  # Previene un posible overflow vs. (lo + hi) // 2
+
+    left_count = count_inverted_pairs_aux(songs, lo, mid)
+    right_count = count_inverted_pairs_aux(songs, mid+1, hi)
+
+    merge_count = merge_and_count(songs, lo, mid, hi)
+
+    return left_count + merge_count + right_count
+
+
+def merge_and_count(songs: list[int], lo: int, mid: int, hi: int) -> int:
+    left = songs[lo:mid+1]  # Toma el rango matemático |$[$|lo|$,$| mid|$]$|
+    right = songs[mid+1:hi+1]  # Toma el rango matemático |$[$|mid|$+1,$| hi|$]$|
+
+    l, r = 0, 0
+    inverted_pairs_count = 0
+
+    while l < len(left) and r < len(right):
+        if left[l] <= right[r]:
+            songs[lo + l + r] = left[l]
+            l += 1
+        else:  # Par invertido! right[r] es menor que todos los left[l:]
+            songs[lo + l + r] = right[r]
+            inverted_pairs_count += len(left) - l
+            r += 1
+
+    while l < len(left):
+        songs[lo + l + r] = left[l]
+        l += 1
+
+    while r < len(right):
+        songs[lo + l + r] = right[r]
+        r += 1
+
+    return inverted_pairs_count
+\end{pseudocode}
+\end{enumerate}
