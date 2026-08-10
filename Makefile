@@ -39,10 +39,15 @@ HOMEWORK_DIRS := $(sort $(shell find homework -mindepth 1 -maxdepth 1 -type d))
 HOMEWORK_NUMS := $(foreach d,$(HOMEWORK_DIRS),$(word 1,$(subst -, ,$(notdir $(d)))))
 $(foreach d,$(HOMEWORK_DIRS),$(eval HOMEWORK_DIR_$(word 1,$(subst -, ,$(notdir $(d)))) := $(d)))
 
-# hw1..hwN are deliberately left out: listing them here would give each
-# an empty explicit rule that shadows the hw% pattern rule below, since
-# they'd never gain a recipe of their own.
-.PHONY: course-docs all-hw $(SIMPLE_DOCS) $(BIBER_DOCS)
+# quizzes/N-slug/ -> N, derived from each directory's numeric prefix
+QUIZ_DIRS := $(sort $(shell find quizzes -mindepth 1 -maxdepth 1 -type d 2>/dev/null))
+QUIZ_NUMS := $(foreach d,$(QUIZ_DIRS),$(word 1,$(subst -, ,$(notdir $(d)))))
+$(foreach d,$(QUIZ_DIRS),$(eval QUIZ_DIR_$(word 1,$(subst -, ,$(notdir $(d)))) := $(d)))
+
+# hw1..hwN and quiz1..quizN are deliberately left out: listing them here
+# would give each an empty explicit rule that shadows the hw%/quiz%
+# pattern rules below, since they'd never gain a recipe of their own.
+.PHONY: course-docs all-hw all-quizzes $(SIMPLE_DOCS) $(BIBER_DOCS)
 
 $(SIMPLE_DOCS):
 	$(call compile,$(DOC_DIR_$@),$(DOC_DIR_$@),$@)
@@ -64,6 +69,13 @@ hw%:
 
 all-hw:
 	$(foreach n,$(HOMEWORK_NUMS),$(MAKE) hw$(n);)
+
+quiz%:
+	$(call compile,$(QUIZ_DIR_$*)/tex/quiz,$(QUIZ_DIR_$*),$(notdir $(QUIZ_DIR_$*)))
+	$(call compile,$(QUIZ_DIR_$*)/tex/solucion,$(QUIZ_DIR_$*),$(notdir $(QUIZ_DIR_$*))-solucion)
+
+all-quizzes:
+	$(foreach n,$(QUIZ_NUMS),$(MAKE) quiz$(n);)
 
 clean:  # Remove all temporary files
 	find . \
