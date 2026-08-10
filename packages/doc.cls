@@ -52,6 +52,9 @@
 \newcommand{\duedate}[1]{\def\@duedate{#1}}
 \def\@duedate{}
 
+\newcommand{\presentationdate}[1]{\def\@presentationdate{#1}}
+\def\@presentationdate{}
+
 \newif\ifsolucion
 \solucionfalse
 
@@ -88,6 +91,9 @@
     \fi
     \ifx\@duedate\@empty\else
         {\scshape Fecha máxima de entrega}: \@duedate\par
+    \fi
+    \ifx\@presentationdate\@empty\else
+        {\scshape Fecha de presentación}: \@presentationdate\par
     \fi
 }
 
