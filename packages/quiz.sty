@@ -1,0 +1,38 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{quiz}[2026/08/09 Front statement / back programming grid for quizzes by fedemelo]
+
+\RequirePackage{tikz}
+
+\newsavebox{\quiznamebox}
+\newsavebox{\quizcodebox}
+
+% Name/code fields for the student to fill in, right below the doc header's
+% dates. One line split 5/8 (name) / 3/8 (code); each field's rule is sized
+% by subtracting the label's measured width from its share of \textwidth, so
+% the two fields together span exactly \textwidth regardless of label length.
+\newcommand{\quizidentification}{%
+    \vspace{0.3cm}
+    \noindent
+    \sbox{\quiznamebox}{{\scshape Nombre}: }%
+    \sbox{\quizcodebox}{{\scshape Código}: }%
+    \usebox{\quiznamebox}\rule{\dimexpr 0.625\textwidth-\wd\quiznamebox-1em\relax}{0.4pt}\hspace{1em}%
+    \usebox{\quizcodebox}\rule{\dimexpr 0.375\textwidth-\wd\quizcodebox\relax}{0.4pt}%
+}
+
+% Starts the back of the sheet: a blank page with a full-page grid for
+% handwritten code, so quizzes can be printed and presented double-sided.
+% Draws against \textheight directly rather than reusing programming-grid's
+% \pagegoal-\pagetotal auto-sizing: on a just-cleared page nothing has been
+% contributed yet, so \pagegoal is still \maxdimen and that math overflows.
+\newcommand{\quizback}{%
+    \clearpage
+    \thispagestyle{empty}
+    \noindent
+    \begin{tikzpicture}
+        \def\cellsize{0.5cm}
+        \pgfmathsetmacro{\gridheightcm}{floor(\textheight/0.5cm) * 0.5}
+        \draw[step=\cellsize, gray!40, thin] (0,0) grid (\textwidth, \gridheightcm cm);
+    \end{tikzpicture}
+}
+
+\endinput
