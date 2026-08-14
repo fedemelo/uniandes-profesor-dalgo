@@ -1,0 +1,37 @@
+\begin{enumerate}
+  \item
+  \begin{enumerate}
+    \item
+    \begin{enumerate}[start=1, label=Caso \arabic*:, leftmargin=*]
+      \item Las tres formas son: $1+1+1$, $1+2$ y $2+1$.
+      \item Las dos formas son: $3+2$ y $2+3$.
+      \item La única forma es dar un paso de $4$.
+    \end{enumerate}
+
+    \item
+    \[
+    \exists\, a, b \in \mathbb{N} \cup \{0\} : ai + bj = n
+    \]
+
+    \item
+    \[
+    f(n) =
+    \begin{cases}
+    1 & \text{si } n = 0 \\
+    0 & \text{si } n < 0 \\
+    f(n - i) + f(n - j) & \text{si } n > 0
+    \end{cases}
+    \]
+  \end{enumerate}
+
+  \item 
+  \leavevmode
+  \begin{pseudocode}
+def formas(n, i, j):
+    if n == 0: return 1
+    if n < 0: return 0
+    return formas(n - i, i, j) + formas(n - j, i, j)
+  \end{pseudocode}
+  
+  {\small Se reproduce la parte conceptualmente significativa de la implementación; el archivo \texttt{solucion\_tarea\_1.py} contiene la implementación completa.}
+\end{enumerate}
