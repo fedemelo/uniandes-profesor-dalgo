@@ -32,7 +32,7 @@ Both drivers set `\title`/`\professor`; only the quiz driver sets `\presentation
 
 ## Building
 
-- `make quizN` — quiz + solution PDF for quiz N
-- `make all-quizzes` — every quiz
+- `make qzN` — quiz + solution PDF for quiz N
+- `make qzs` — every quiz
 
 PDFs land at the quiz's root regardless of driver location.

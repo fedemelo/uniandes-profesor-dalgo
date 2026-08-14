@@ -25,6 +25,6 @@ Both drivers set `\title`/`\professor`; only the assignment driver sets `\dateou
 ## Building
 
 - `make hwN` — assignment + solution PDF for homework N
-- `make all-hw` — every homework
+- `make hws` — every homework
 
 `hw%` uses `tex/tarea/`/`tex/solucion/` as driver source dirs when present, else falls back to the homework root. PDFs always land at the homework root regardless.
