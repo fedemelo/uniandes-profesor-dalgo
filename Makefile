@@ -77,6 +77,34 @@ qz%:
 qzs:
 	$(foreach n,$(QUIZ_NUMS),$(MAKE) qz$(n);)
 
+# Announcements: plain markdown, anywhere, one file per announcement.
+# make path/to/file.md`  
+# Renders it to HTML and pushes that onto the clipboard
+# as rich text), so pasting into Brightspace's editor works
+
+# VS Code's terminal drag sometimes drops the '&' from filenames, so if the
+# exact path doesn't exist, fall back to matching a .md file in the same
+# directory whose name is identical once all '&' are stripped from both.
+.PHONY: FORCE
+FORCE:
+
+%.md: FORCE
+	@target="$@"; \
+	if [ ! -f "$$target" ]; then \
+		dir="$$(dirname "$$target")"; \
+		wanted="$$(basename "$$target" | tr -d '&')"; \
+		match=""; \
+		for f in "$$dir"/*.md; do \
+			[ -f "$$f" ] || continue; \
+			if [ "$$(basename "$$f" | tr -d '&')" = "$$wanted" ]; then match="$$f"; break; fi; \
+		done; \
+		if [ -z "$$match" ]; then echo "No announcement matches $$target (even ignoring '&')" >&2; exit 1; fi; \
+		target="$$match"; \
+	fi; \
+	html="/tmp/$$(basename "$${target%.md}").html"; \
+	pandoc "$$target" -o "$$html" --standalone; \
+	osascript -e "set the clipboard to (read (POSIX file \"$$html\") as «class HTML»)"
+
 clean:  # Remove all temporary files
 	find . \
 	\( \
