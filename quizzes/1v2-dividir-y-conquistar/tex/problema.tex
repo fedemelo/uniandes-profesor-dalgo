@@ -1,0 +1,17 @@
+\section{Problema}
+Una tienda en línea registra el precio de un producto a lo largo de $n$ días consecutivos: $a_1, a_2, \ldots, a_n$. La tienda quiere detectar \emph{caídas significativas} de precio: un par de días $(i, j)$ con $i < j$ es una caída significativa si el precio en el día $j$ es menos de la mitad del precio en el día $i$, es decir, si $a_i > 2 a_j$.
+
+Diseñe un algoritmo de dividir y conquistar que cuente el número de caídas significativas.
+\begin{itemize}
+  \item Entrada: Un arreglo \inline{precios} de longitud $n$ con enteros positivos, donde \inline{precios[i]} es el precio del producto en el día $i+1$.
+  \item Salida: el número de caídas significativas.
+\end{itemize}
+
+E.g., el arreglo \inline{[8, 4, 2, 1]} contiene tres caídas significativas: \((8,2)\), \((8,1)\) y \((4,1)\).
+
+\section{Entregables}
+
+\begin{enumerate}
+  \item (0 puntos) Si lo desea, use el espacio restante en esta página para realizar una lluvia de ideas sobre su algoritmo. Puede escribir o dibujar cualquier cosa.
+  \item (5 puntos) En la cuadrícula en el revés de la hoja, implemente su algoritmo en Python, Java, C, C++, JavaScript o TypeScript.
+\end{enumerate}

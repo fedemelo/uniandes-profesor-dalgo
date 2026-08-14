@@ -1,0 +1,61 @@
+\begin{enumerate}
+  \item Se puede tomar como base la implementación de merge sort. \\
+
+  En el paso de combinar, se comparan los elementos de la mitad izquierda con los de la mitad derecha. Como ambas mitades vienen ordenadas, para cada elemento de la mitad izquierda (recorrida de menor a mayor), el conjunto de elementos de la mitad derecha con los que forma una caída significativa es un prefijo (posiblemente vacío) de la mitad derecha, y ese prefijo nunca retrocede a medida que se avanza en la mitad izquierda. Esto permite recorrer la mitad derecha con un único puntero que avanza monótonamente mientras se recorre la mitad izquierda, contando en tiempo $O(n)$ las caídas que cruzan la mitad. \\
+
+  Esa es la modificación, aunado a pasar la variable que tiene el conteo por todos los llamados de funciones.
+
+  \pagebreak
+
+  \item Implementación en Python:
+
+\begin{pseudocode}
+def count_significant_drops(precios: list[int]) -> int:
+    return count_significant_drops_aux(precios, 0, len(precios)-1)
+
+
+def count_significant_drops_aux(a: list[int], lo: int, hi: int) -> int:
+    if lo >= hi: return 0
+
+    mid = lo + (hi - lo) // 2  # Previene un posible overflow vs. (lo + hi) // 2
+
+    left_count = count_significant_drops_aux(a, lo, mid)
+    right_count = count_significant_drops_aux(a, mid+1, hi)
+
+    merge_count = merge_and_count(a, lo, mid, hi)
+
+    return left_count + merge_count + right_count
+
+
+def merge_and_count(a: list[int], lo: int, mid: int, hi: int) -> int:
+    left = a[lo:mid+1]  # Toma el rango matemático |$[$|lo|$,$| mid|$]$|
+    right = a[mid+1:hi+1]  # Toma el rango matemático |$[$|mid|$+1,$| hi|$]$|
+
+    j = 0
+    drops_count = 0
+
+    for i in range(len(left)):
+        while j < len(right) and left[i] > 2 * right[j]:
+            j += 1
+        drops_count += j
+
+    l, r = 0, 0
+    while l < len(left) and r < len(right):
+        if left[l] <= right[r]:
+            a[lo + l + r] = left[l]
+            l += 1
+        else:
+            a[lo + l + r] = right[r]
+            r += 1
+
+    while l < len(left):
+        a[lo + l + r] = left[l]
+        l += 1
+
+    while r < len(right):
+        a[lo + l + r] = right[r]
+        r += 1
+
+    return drops_count
+\end{pseudocode}
+\end{enumerate}
