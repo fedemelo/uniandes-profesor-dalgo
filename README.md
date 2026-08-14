@@ -13,4 +13,4 @@ Exámenes, quizzes, tareas y anuncios que escribí como profesor del curso ISIS-
 
 Docs, homeworks, and quizzes are LaTeX, built off the shared `packages/` styles/classes.
 
-Announcements aren't built — they're plain Markdown, and `make path/to/file.md` renders one to HTML on the clipboard as rich text, ready to paste into a Brightspace announcement.
+Announcements aren't built, they're plain Markdown, and `make path/to/file.md` renders it to HTML on the clipboard as rich text so it preserves formatting when pasted into a Brightspace announcement.
