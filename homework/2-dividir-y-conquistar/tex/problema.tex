@@ -1,0 +1,8 @@
+\section{Problema}
+Una hidroeléctrica mide diariamente el nivel de agua de su embalse. Cada día $k$ se registra el cambio $c_k$ del nivel respecto al día anterior: positivo si el nivel subió, negativo si bajó.
+
+Se define un rango seguro de variación acumulada de nivel, $[\ell, u]$: si el cambio acumulado del nivel a lo largo de un periodo de días consecutivos excede el rango, se dispara una alerta de inundación; si cae debajo, se alerta una posible sequía.
+
+Diseñe un algoritmo de dividir y conquistar que, dado el arreglo $c_1, c_2, \ldots, c_n$ de cambios diarios y el rango $[\ell, u]$, cuente cuántos periodos distintos de días consecutivos tuvieron una variación acumulada de nivel dentro de ese rango.
+
+E.g., dado el arreglo \inline{[4, -6, 3, -1]} y el rango $[-2, 2]$, hay cinco periodos dentro del rango: los días 1 a 2 (cambio acumulado $4-6=-2$, dentro de \([-2, 2]\)), los días 1 a 3 ($4-6+3=1 \in [-2, 2]$), los días 1 a 4 ($4-6+3-1=0$), los días 3 a 4 ($3-1=2$) y el día 4 solo (cambio $-1$).
