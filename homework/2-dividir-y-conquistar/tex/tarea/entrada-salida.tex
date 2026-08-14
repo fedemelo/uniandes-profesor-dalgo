@@ -1,0 +1,30 @@
+\subsection{Entrada y salida}
+
+\textbf{Entrada:} La primera línea contiene la cantidad de casos de prueba. Cada caso de prueba consta de tres líneas: la primera contiene un número de días $n$ ($1 \le n \le 10^5$); la segunda, los $n$ enteros del arreglo de cambios diarios, cada uno satisface $-2^{31} \le c_i \le 2^{31}-1$; la tercera, los límites del rango seguro $\ell$ y $u$, tal que $-10^5 \le \ell \le u \le 10^5$.
+
+\textbf{Salida:} Por cada caso de prueba, la cantidad de periodos de días consecutivos cuyo cambio acumulado de nivel está dentro del rango seguro.
+
+Entrada:
+\begin{pseudocode}
+4
+1
+0
+0 0
+1
+5
+-3 3
+4
+4 -6 3 -1
+-2 2
+4
+1 -1 1 -1
+0 0
+\end{pseudocode}
+
+Salida esperada:
+\begin{pseudocode}
+1
+0
+5
+4
+\end{pseudocode}
