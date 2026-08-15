@@ -1,0 +1,75 @@
+\begin{enumerate}
+  \item
+  \begin{enumerate}
+    \item
+    \begin{enumerate}[start=1, label=Caso \arabic*:, leftmargin=*]
+      \item El arreglo es \inline{[0]} y el rango $[0, 0]$. Evidentemente el único periodo posible es el día 1, con cambio acumulado $0 \in [0, 0]$.
+      \item Para \inline{[5]} y rango $[-3, 3]$, $5 \notin [-3, 3]$, hay $0$ periodos.
+      \item Para \inline{[4, -6, 3, -1]}, los $10$ periodos posibles son:
+      \begin{enumerate}[label=\arabic*.]
+        \item \inline{[4]}, con cambio acumulado $4$
+        \item \inline{[4, -6]}, con $-2$
+        \item \inline{[4, -6, 3]}, con $1$
+        \item \inline{[4, -6, 3, -1]}, con $0$
+        \item \inline{[-6]}, con $-6$
+        \item \inline{[-6, 3]}, con $-3$
+        \item \inline{[-6, 3, -1]}, con $-4$
+        \item \inline{[3]}, con $3$
+        \item \inline{[3, -1]}, con $2$
+        \item \inline{[-1]}, con $-1$
+      \end{enumerate}
+      De esos, cinco están en el rango $[-2, 2]$.
+      \item Para \inline{[1, -1, 1, -1]} un análisis similar al anterior muestra que solo cuatro periodos: \inline{[1, -1]} (dos veces, en los días del 1 al 2 y del 3 al 4), \inline{[-1, 1]} y \inline{[1, -1, 1, -1]}, tienen cambio acumulado $0 \in [0, 0]$.
+    \end{enumerate}
+
+    \item Se puede formular infinidad de relaciones entre este problema y los vistos en clase, que son: merge sort (clase 2), conteo de pares invertidos y máximo subarreglo (ambos clase 3).
+
+    \medskip
+    Una primera relación evidente es que en los cuatro problemas se resuelve la mitad izquierda, la mitad derecha y luego se combinan las soluciones de alguna manera. Haber hallado una relación de ese estilo basta (por la intencional ambigüedad del enunciado de la tarea).
+
+    \medskip
+    Sin embargo, la solución clásica del problema define una función $f$ como $f(k) = \sum_{i=1}^k c_i$. Es decir: \(f\) computa la suma acumulada de los primeros $k$ elementos.
+
+    \medskip
+    Si se usa esa función como arreglo, es decir, se define un arreglo \inline{accum} donde \inline{accum[i]} corresponde a \(f(i)\), en ese arreglo, el cambio acumulado del periodo de días desde $i+1$ hasta $j$ es \inline{accum[j] - accum[i]}
+
+    \medskip
+    Con esa transformación es simple calcular el cambio acumulado de cualquier periodo de días usando un par de índices \(i, j\), por lo cual es sencillo relacionar la solución al problema de pares invertidos. Como vimos en la corrección del quiz 1 en la clase 3, una solución a ese problema consiste en añadir unas pocas lineas a merge sort.
+  \end{enumerate}
+
+  \item
+  \leavevmode
+  \begin{pseudocode}
+def contar_periodos_aux(prefijos: list[int], lo: int, hi: int) -> int:
+    if lo >= hi: return 0
+
+    mid = (hi - lo) // 2 + lo
+
+    left_count = contar_periodos_aux(prefijos, lo, mid)
+    right_count = contar_periodos_aux(prefijos, mid+1, hi)
+    merge_count = merge_and_count(prefijos, lo, mid, hi)
+
+    return left_count + right_count + merge_count
+
+
+def merge_and_count(prefijos: list[int], lo: int, mid: int, hi: int) -> int:
+    left = prefijos[lo:mid+1]
+    right = prefijos[mid+1:hi+1]
+
+    lo_ptr = hi_ptr = 0
+    periodos_count = 0
+    for p in left:
+        while lo_ptr < len(right) and right[lo_ptr] < p + lower:
+            lo_ptr += 1
+        while hi_ptr < len(right) and right[hi_ptr] <= p + upper:
+            hi_ptr += 1
+        periodos_count += hi_ptr - lo_ptr
+
+    # En este espacio va el paso de combinar de merge sort,
+    # tal y como se implementó en la clase 2.
+
+    return periodos_count
+  \end{pseudocode}
+
+  {\small Se reproduce solo la parte conceptualmente significativa de la implementación. En \inline{merge_and_count} se omiten los parámetros \inline{lower} y \inline{upper}. El archivo \texttt{solucion\_tarea\_2.py} contiene la implementación completa.}
+\end{enumerate}
