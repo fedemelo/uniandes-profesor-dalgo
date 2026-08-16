@@ -16,6 +16,10 @@ homework/N-nombre-kebab/
     solucion/
       N-nombre-kebab-solucion.tex        (solution driver)
       solucion.tex
+  tests/                                 (grading fixtures, uncommitted — see generate-test-cases skill)
+    case_01.in
+    case_01.out
+    ...
 ```
 
 The assignment driver `\input`s `tex/problema`, then `tex/tarea/entrada-salida` and `tex/tarea/entregables`. The solution driver `\input`s only `tex/solucion/solucion` (after `\soluciontrue`) — just the answers, numbered to match `entregables.tex`'s items. Points on sub-items must sum to their parent item's points.
