@@ -69,7 +69,13 @@ def _unzip_nested_archives(
 
 def _find_code_file(folder: Path, notes: list[str]) -> Path | None:
     _unzip_nested_archives(folder, notes)
-    candidates = sorted(p for p in folder.rglob("*") if p.suffix in _CODE_EXTENSIONS and p.is_file())
+    # Zips built on macOS carry a __MACOSX/._<name> AppleDouble stub per file, sharing the real
+    # file's extension -- exclude those or one can get picked over the student's actual code.
+    candidates = sorted(
+        p
+        for p in folder.rglob("*")
+        if p.suffix in _CODE_EXTENSIONS and p.is_file() and not p.name.startswith("._")
+    )
     if not candidates:
         return None
     if len(candidates) > 1:

@@ -118,6 +118,23 @@ class LoadSubmissionsTests(unittest.TestCase):
         # index.html shouldn't produce a phantom submission
         self.assertEqual(len(submissions), 1)
 
+    def test_ignores_macos_resource_fork_stubs(self):
+        export = self.tmp / "export.zip"
+        _make_export_zip(
+            export,
+            {
+                "88888-465221 - Mac User - 15 de agosto de 2026 1000": {
+                    "__MACOSX/._sol.py": b"not real code",
+                    "sol.py": b"print('real')",
+                },
+            },
+        )
+
+        submissions = extract.load_submissions(export, self.tmp / "work")
+
+        self.assertEqual(submissions[0].code_file.name, "sol.py")
+        self.assertEqual(submissions[0].code_file.read_bytes(), b"print('real')")
+
 
 if __name__ == "__main__":
     unittest.main()
