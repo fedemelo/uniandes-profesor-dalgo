@@ -15,8 +15,8 @@ def print_summary(results: list[SubmissionResult]) -> None:
         passed, total = result.score
         if result.status != "graded":
             print(f"{result.submission.name:35s} {result.status}")
-            continue
-        print(f"{result.submission.name:35s} {passed}/{total} ({result.language})")
+        else:
+            print(f"{result.submission.name:35s} {passed}/{total} ({result.language})")
         for note in result.submission.notes:
             print(f"  ! {note}")
 
