@@ -43,7 +43,7 @@ class C(Language):
 
 class Java(Language):
     extensions = (".java",)
-    _PUBLIC_CLASS_RE = re.compile(r"\bpublic\s+class\s+(\w+)")
+    _PUBLIC_CLASS_RE = re.compile(r"\bpublic\s+(?:(?:final|abstract|static|strictfp|sealed)\s+)*class\s+(\w+)")
     _CLASS_RE = re.compile(r"\bclass\s+(\w+)")
 
     def stage(self, source: Path, workdir: Path) -> Staged:
