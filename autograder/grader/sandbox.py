@@ -35,6 +35,7 @@ class RunResult:
     returncode: int | None
     elapsed: float
     timed_out: bool
+    output_capped: bool = False  # True when the kill was due to the output cap, not the deadline
 
 
 def _read_capped(stream, cap: int, box: dict) -> None:
@@ -121,6 +122,7 @@ def run(workdir: Path, cmd: list[str], *, stdin: bytes = b"", timeout: float) ->
         returncode=None if killed else proc.returncode,
         elapsed=time.monotonic() - start,
         timed_out=killed,
+        output_capped=output_exceeded,
     )
 
 

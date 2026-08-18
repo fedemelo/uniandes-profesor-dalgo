@@ -29,7 +29,8 @@ def calibrate_timeout(reference_solution: Path, test_cases: list[TestCase]) -> f
         for case in test_cases:
             result = sandbox.run(workdir, run_cmd, stdin=case.input_bytes, timeout=_CALIBRATION_TIMEOUT)
             if result.timed_out:
-                raise RuntimeError(f"reference solution timed out on {case.name} during calibration")
+                reason = "produced too much output" if result.output_capped else "timed out"
+                raise RuntimeError(f"reference solution {reason} on {case.name} during calibration")
             max_elapsed = max(max_elapsed, result.elapsed)
 
     return max(max_elapsed * SAFETY_FACTOR, MIN_TIMEOUT)
