@@ -5,7 +5,7 @@ import shutil
 import sys
 from pathlib import Path
 
-from . import complexity, extract, provenance, report
+from . import complexity, extract, provenance, report, sandbox
 from .cli import AUTOGRADER_ROOT, REPO_ROOT, _find_export_zip
 from .safe_zip import UnsafeZipError
 
@@ -41,6 +41,8 @@ def main() -> None:
         sys.exit(f"Rejected {export_zip}: {exc}")
     if not submissions:
         sys.exit(f"No submission folders recognized in {export_zip}.")
+
+    sandbox.warm_up()  # avoid mistaking Docker's one-off cold-start cost for a slow case/submission
 
     print(f"Checking {len(submissions)} submissions...")
     check = complexity.run(args.homework, homework_dir, submissions, sizes=args.sizes)

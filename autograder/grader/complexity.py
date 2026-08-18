@@ -5,7 +5,7 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import languages, reference, sandbox, scaling, staging
+from . import languages, reference, scaling, staging
 from .staging import CompileFailure
 from .submission import Submission
 
@@ -55,8 +55,6 @@ def run(
         raise FileNotFoundError(f"Seed case not found: {seed}")
 
     inputs_by_size = {n: scaler(seed, n) for n in sizes}
-
-    sandbox.warm_up()  # avoid mistaking Docker's one-off cold-start cost for a slow case/submission
 
     reference_points = _measure_reference(reference.solution_path(homework_dir), inputs_by_size)
     if not reference_points:
