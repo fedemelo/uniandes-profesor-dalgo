@@ -55,7 +55,6 @@ def run(
         raise FileNotFoundError(f"Seed case not found: {seed}")
 
     inputs_by_size = {n: scaler(seed, n) for n in sizes}
-    max_size = max(inputs_by_size)
 
     sandbox.warm_up()  # avoid mistaking Docker's one-off cold-start cost for a slow case/submission
 
@@ -63,8 +62,12 @@ def run(
     if not reference_points:
         raise RuntimeError("Reference solution didn't complete any size within the run timeout.")
     threshold = max(reference_points[-1].elapsed * SAFETY_FACTOR, MIN_THRESHOLD)
+    # Compare against the size the reference itself reached, not the full requested schedule: if
+    # RUN_TIMEOUT keeps even the reference from reaching the largest size, a submission matching
+    # the reference's own performance shouldn't be flagged just for topping out at the same size.
+    reference_max_size = reference_points[-1].n
 
-    results = [_probe_submission(s, inputs_by_size, max_size, threshold) for s in submissions]
+    results = [_probe_submission(s, inputs_by_size, reference_max_size, threshold) for s in submissions]
     return Check(sizes=sizes, threshold=threshold, reference_points=reference_points, results=results)
 
 
@@ -106,7 +109,7 @@ def _measure_reference(reference_solution: Path, inputs_by_size: dict[int, bytes
 
 
 def _probe_submission(
-    submission: Submission, inputs_by_size: dict[int, bytes], max_size: int, threshold: float
+    submission: Submission, inputs_by_size: dict[int, bytes], reference_max_size: int, threshold: float
 ) -> SubmissionCheck:
     if submission.code_file is None:
         return SubmissionCheck(submission, "no_code_file", [])
@@ -130,5 +133,5 @@ def _probe_submission(
         return SubmissionCheck(submission, "no_points", points)
 
     largest = points[-1]
-    flagged = largest.n != max_size or largest.elapsed > threshold
+    flagged = largest.n != reference_max_size or largest.elapsed > threshold
     return SubmissionCheck(submission, "flagged" if flagged else "ok", points)
