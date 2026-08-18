@@ -45,7 +45,10 @@ def main() -> None:
     sandbox.warm_up()  # avoid mistaking Docker's one-off cold-start cost for a slow case/submission
 
     print(f"Checking {len(submissions)} submissions...")
-    check = complexity.run(args.homework, homework_dir, submissions, sizes=args.sizes)
+    try:
+        check = complexity.run(args.homework, homework_dir, submissions, sizes=args.sizes)
+    except (ValueError, RuntimeError, FileNotFoundError) as exc:
+        sys.exit(str(exc))
     complexity.print_check(check)
 
     stamp = report.timestamp()

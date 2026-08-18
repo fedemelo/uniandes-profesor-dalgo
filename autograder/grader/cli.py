@@ -102,7 +102,11 @@ def main() -> None:
         return
 
     print(f"\nRunning complexity check for {len(submissions)} submissions...")
-    check = complexity.run(args.homework, homework_dir, submissions)
+    try:
+        check = complexity.run(args.homework, homework_dir, submissions)
+    except (ValueError, RuntimeError, FileNotFoundError) as exc:
+        print(f"\nComplexity check failed, grading results above are unaffected: {exc}")
+        return
     complexity.print_check(check)
     complexity_csv = report.save_complexity_csv(check, args.homework, results_dir, stamp)
     complexity_meta_file = provenance.save(

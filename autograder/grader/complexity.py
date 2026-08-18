@@ -55,7 +55,10 @@ def run(
     if not seed.is_file():
         raise FileNotFoundError(f"Seed case not found: {seed}")
 
-    inputs_by_size = {n: scaler(seed, n) for n in sizes}
+    try:
+        inputs_by_size = {n: scaler(seed, n) for n in sizes}
+    except ValueError as exc:
+        raise ValueError(f"can't build inputs for {homework!r} with sizes={sizes}: {exc}") from exc
 
     reference_points = _measure_reference(reference.solution_path(homework_dir), inputs_by_size)
     if not reference_points:
