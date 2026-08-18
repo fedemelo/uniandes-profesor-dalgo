@@ -19,8 +19,10 @@ def _reject_unsafe_path(filename: str) -> None:
         raise UnsafeZipError(f"unsafe path in archive: {filename}")
 
 
-def safe_extractall(zip_path: Path, target: Path) -> None:
+def safe_extractall(zip_path: Path, target: Path) -> int:
     """Extract `zip_path` into `target`, bounding member count, path traversal, and total bytes.
+    Returns the number of bytes written, so a caller unpacking several zips (e.g. nested archives
+    within one submission) can enforce a cap on their combined total.
 
     Bytes are counted from the actual decompressed stream (not the zip's own size metadata,
     which an attacker can misstate), so this holds even against a mislabeled zip bomb.
@@ -54,3 +56,5 @@ def safe_extractall(zip_path: Path, target: Path) -> None:
                             f"{MAX_UNCOMPRESSED_BYTES // (1024 * 1024)} MB cap"
                         )
                     out.write(chunk)
+
+    return total_written

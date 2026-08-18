@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 
 from .languages import REGISTRY
-from .safe_zip import UnsafeZipError, safe_extractall
+from .safe_zip import MAX_UNCOMPRESSED_BYTES, UnsafeZipError, safe_extractall
 from .submission import Submission
 
 # Brightspace export folder name, e.g.:
@@ -13,6 +13,10 @@ _FOLDER_RE = re.compile(r"^(?P<student_id>\d+)-(?P<course_id>\d+) - (?P<name>.+)
 
 _CODE_EXTENSIONS = {ext for language in REGISTRY for ext in language.extensions}
 _MAX_NESTED_ZIP_DEPTH = 3
+# Per-submission cap on bytes extracted from *all* nested zips combined -- safe_extractall bounds
+# each individual zip, but a folder with many small sibling zips could otherwise still multiply
+# past that per-zip cap.
+_MAX_NESTED_TOTAL_BYTES = MAX_UNCOMPRESSED_BYTES
 
 _SPANISH_MONTHS = {
     "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
@@ -31,23 +35,33 @@ def _timestamp_key(timestamp: str) -> tuple[int, int, int, int]:
     return (int(year), month, int(day), int(hhmm))
 
 
-def _unzip_nested_archives(folder: Path, notes: list[str], depth: int = 0) -> None:
+def _unzip_nested_archives(
+    folder: Path, notes: list[str], depth: int = 0, budget: list[int] | None = None
+) -> None:
+    if budget is None:
+        budget = [0]  # bytes extracted so far from nested zips, shared across the whole recursion
     if depth >= _MAX_NESTED_ZIP_DEPTH:
         return
     for archive in list(folder.glob("*.zip")):
+        if budget[0] > _MAX_NESTED_TOTAL_BYTES:
+            notes.append(
+                f"stopped unzipping nested archives: combined total exceeds "
+                f"{_MAX_NESTED_TOTAL_BYTES // (1024 * 1024)} MB cap"
+            )
+            return
         target = folder / archive.stem
         target.mkdir(exist_ok=True)
         try:
-            safe_extractall(archive, target)
+            budget[0] += safe_extractall(archive, target)
         except UnsafeZipError as exc:
             notes.append(f"rejected nested archive {archive.relative_to(folder)}: {exc}")
             continue
-        _unzip_nested_archives(target, notes, depth + 1)
+        _unzip_nested_archives(target, notes, depth + 1, budget)
 
 
 def _find_code_file(folder: Path, notes: list[str]) -> Path | None:
     _unzip_nested_archives(folder, notes)
-    candidates = [p for p in folder.rglob("*") if p.suffix in _CODE_EXTENSIONS and p.is_file()]
+    candidates = sorted(p for p in folder.rglob("*") if p.suffix in _CODE_EXTENSIONS and p.is_file())
     if not candidates:
         return None
     if len(candidates) > 1:
@@ -69,6 +83,7 @@ def load_submissions(export_zip: Path, extract_root: Path) -> list[Submission]:
             continue  # skip index.html and the like
         match = _FOLDER_RE.match(entry.name)
         if not match:
+            print(f"! skipping {entry.name!r}: doesn't match the expected Brightspace folder name")
             continue
 
         notes: list[str] = []
