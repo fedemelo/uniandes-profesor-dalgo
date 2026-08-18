@@ -56,6 +56,12 @@ def _unzip_nested_archives(
         except UnsafeZipError as exc:
             notes.append(f"rejected nested archive {archive.relative_to(folder)}: {exc}")
             continue
+        if budget[0] > _MAX_NESTED_TOTAL_BYTES:
+            notes.append(
+                f"stopped unzipping nested archives: combined total exceeds "
+                f"{_MAX_NESTED_TOTAL_BYTES // (1024 * 1024)} MB cap"
+            )
+            return
         _unzip_nested_archives(target, notes, depth + 1, budget)
 
 
