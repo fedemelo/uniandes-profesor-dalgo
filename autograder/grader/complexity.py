@@ -69,6 +69,8 @@ def run(
     # the reference's own performance shouldn't be flagged just for topping out at the same size.
     reference_max_size = reference_points[-1].n
 
+    # Deliberately sequential, unlike grade_all: concurrent containers competing for CPU would add
+    # noise to the timings this check flags on, risking false positives on correct submissions.
     results = [_probe_submission_safe(s, inputs_by_size, reference_max_size, threshold) for s in submissions]
     return Check(sizes=sizes, threshold=threshold, reference_points=reference_points, results=results)
 
