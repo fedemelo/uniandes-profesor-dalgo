@@ -41,6 +41,8 @@ def _unzip_nested_archives(
     if budget is None:
         budget = [0]  # bytes extracted so far from nested zips, shared across the whole recursion
     if depth >= _MAX_NESTED_ZIP_DEPTH:
+        if any(folder.glob("*.zip")):
+            notes.append(f"stopped unzipping nested archives: exceeded max nesting depth of {_MAX_NESTED_ZIP_DEPTH}")
         return
     for archive in list(folder.glob("*.zip")):
         if budget[0] > _MAX_NESTED_TOTAL_BYTES:
