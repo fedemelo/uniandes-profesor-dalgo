@@ -23,9 +23,10 @@ class CaseResult:
 @dataclass
 class SubmissionResult:
     submission: Submission
-    status: str  # "graded" | "unsupported_language" | "no_code_file" | "compile_error"
+    status: str  # "graded" | "unsupported_language" | "no_code_file" | "compile_error" | "error"
     language: str | None = None
     compile_stderr: str | None = None
+    error: str | None = None
     cases: list[CaseResult] = field(default_factory=list)
 
     @property
@@ -75,6 +76,16 @@ def grade_submission(submission: Submission, test_cases: list[TestCase], timeout
         )
 
 
+def _grade_submission_safe(submission: Submission, test_cases: list[TestCase], timeout: float) -> SubmissionResult:
+    """Wraps grade_submission so one submission raising (a Docker hiccup, an unreadable file from
+    the zip, etc.) can't take down the whole batch and lose every other submission's results.
+    """
+    try:
+        return grade_submission(submission, test_cases, timeout)
+    except Exception as exc:
+        return SubmissionResult(submission, status="error", error=repr(exc))
+
+
 def grade_all(
     submissions: list[Submission],
     test_cases: list[TestCase],
@@ -83,10 +94,7 @@ def grade_all(
     max_workers: int = 8,
 ) -> list[SubmissionResult]:
     with ThreadPoolExecutor(max_workers=max_workers) as pool:
-        futures = {
-            pool.submit(grade_submission, submission, test_cases, timeout): submission
-            for submission in submissions
-        }
+        futures = [pool.submit(_grade_submission_safe, submission, test_cases, timeout) for submission in submissions]
         results = [future.result() for future in as_completed(futures)]
 
     return sorted(results, key=lambda r: r.submission.name)

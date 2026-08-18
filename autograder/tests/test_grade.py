@@ -89,6 +89,39 @@ class GradeSubmissionTests(unittest.TestCase):
         self.assertFalse(result.cases[0].passed)
 
 
+class GradeAllFaultIsolationTests(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.tmp = Path(self._tmp.name)
+        self.addCleanup(self._tmp.cleanup)
+        self.cases = [TestCase(name="case_1", input_bytes=b"2 3\n", expected_bytes=b"5\n")]
+
+    def _submission(self, student_id: str) -> Submission:
+        code_file = self.tmp / f"{student_id}.py"
+        code_file.write_text("print(5)\n")
+        return Submission(student_id=student_id, name=student_id, timestamp="", folder=self.tmp, code_file=code_file)
+
+    def test_one_submission_raising_does_not_lose_the_others(self):
+        submissions = [self._submission("1"), self._submission("2"), self._submission("3")]
+        original_grade_submission = grade.grade_submission
+
+        def flaky_grade_submission(submission, test_cases, timeout):
+            if submission.student_id == "2":
+                raise OSError("boom")
+            return original_grade_submission(submission, test_cases, timeout)
+
+        with patch.object(sandbox, "run", return_value=_run_result(stdout=b"5\n")):
+            with patch.object(grade, "grade_submission", side_effect=flaky_grade_submission):
+                results = grade.grade_all(submissions, self.cases, timeout=5.0)
+
+        by_id = {r.submission.student_id: r for r in results}
+        self.assertEqual(len(results), 3)
+        self.assertEqual(by_id["1"].status, "graded")
+        self.assertEqual(by_id["2"].status, "error")
+        self.assertIn("boom", by_id["2"].error)
+        self.assertEqual(by_id["3"].status, "graded")
+
+
 class NormalizeTests(unittest.TestCase):
     def test_ignores_trailing_whitespace_per_line(self):
         self.assertEqual(testcases.normalize(b"5 \n6\t\n"), testcases.normalize(b"5\n6\n"))

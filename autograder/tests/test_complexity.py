@@ -48,5 +48,25 @@ class ProbeSubmissionTests(unittest.TestCase):
         self.assertEqual(result.status, "flagged")
 
 
+class ProbeSubmissionSafeTests(unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.tmp = Path(self._tmp.name)
+        self.addCleanup(self._tmp.cleanup)
+
+        code_file = self.tmp / "sol.py"
+        code_file.write_text("print('ok')\n")
+        self.submission = Submission(
+            student_id="1", name="Someone", timestamp="", folder=self.tmp, code_file=code_file
+        )
+
+    def test_reports_error_status_instead_of_raising(self):
+        with patch.object(complexity, "_probe_submission", side_effect=OSError("boom")):
+            result = complexity._probe_submission_safe(self.submission, {}, reference_max_size=1, threshold=1.0)
+
+        self.assertEqual(result.status, "error")
+        self.assertIn("boom", result.error)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -22,8 +22,9 @@ class NotSupported(Exception):
 @dataclass(frozen=True)
 class SubmissionCheck:
     submission: Submission
-    status: str  # "ok" | "flagged" | "no_code_file" | "unsupported_language" | "compile_error" | "no_points"
+    status: str  # "ok" | "flagged" | "no_code_file" | "unsupported_language" | "compile_error" | "no_points" | "error"
     points: list[scaling.SizePoint]
+    error: str | None = None
 
 
 @dataclass(frozen=True)
@@ -65,7 +66,7 @@ def run(
     # the reference's own performance shouldn't be flagged just for topping out at the same size.
     reference_max_size = reference_points[-1].n
 
-    results = [_probe_submission(s, inputs_by_size, reference_max_size, threshold) for s in submissions]
+    results = [_probe_submission_safe(s, inputs_by_size, reference_max_size, threshold) for s in submissions]
     return Check(sizes=sizes, threshold=threshold, reference_points=reference_points, results=results)
 
 
@@ -104,6 +105,18 @@ def _measure_reference(reference_solution: Path, inputs_by_size: dict[int, bytes
         workdir = Path(tmp)
         shutil.copy(reference_solution, workdir / "main.py")
         return scaling.measure(["python3", "main.py"], workdir, inputs_by_size, timeout=RUN_TIMEOUT, repeats=REPEATS)
+
+
+def _probe_submission_safe(
+    submission: Submission, inputs_by_size: dict[int, bytes], reference_max_size: int, threshold: float
+) -> SubmissionCheck:
+    """Wraps _probe_submission so one submission raising can't abort the whole check and lose every
+    other submission's results.
+    """
+    try:
+        return _probe_submission(submission, inputs_by_size, reference_max_size, threshold)
+    except Exception as exc:
+        return SubmissionCheck(submission, "error", [], error=repr(exc))
 
 
 def _probe_submission(

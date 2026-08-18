@@ -75,6 +75,8 @@ def save_json(results: list[SubmissionResult], homework: str, results_dir: Path,
         }
         if result.compile_stderr:
             entry["compile_stderr"] = result.compile_stderr
+        if result.error:
+            entry["error"] = result.error
         payload.append(entry)
 
     out_file.write_text(json.dumps(payload, indent=2, ensure_ascii=False))
@@ -93,7 +95,7 @@ def save_complexity_csv(check: Check, homework: str, results_dir: Path, stamp: s
         )
         for result in check.results:
             largest = result.points[-1] if result.points else None
-            points_str = "; ".join(f"n={p.n}:{p.elapsed:.4f}s" for p in result.points)
+            points_str = result.error or "; ".join(f"n={p.n}:{p.elapsed:.4f}s" for p in result.points)
             writer.writerow(
                 [
                     result.submission.student_id,
