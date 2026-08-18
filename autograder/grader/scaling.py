@@ -13,7 +13,7 @@ def truncate_array_case(seed: Path, n: int) -> bytes:
     """Build a single-case input at size `n` by slicing `n` array values out of a larger seed
     case. Matches homework 2's per-case grammar: n / n-length array / two bound integers.
     """
-    t, n_full, array_line, bounds = seed.read_text().splitlines()[:4]
+    _, _, array_line, bounds = seed.read_text().splitlines()[:4]
     values = array_line.split()
     if n > len(values):
         raise ValueError(f"requested n={n} exceeds seed case size {len(values)}")
