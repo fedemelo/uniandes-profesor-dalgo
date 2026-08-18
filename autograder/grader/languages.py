@@ -45,12 +45,18 @@ class Java(Language):
     extensions = (".java",)
     _PUBLIC_CLASS_RE = re.compile(r"\bpublic\s+(?:(?:final|abstract|static|strictfp|sealed)\s+)*class\s+(\w+)")
     _CLASS_RE = re.compile(r"\bclass\s+(\w+)")
+    _STRING_OR_CHAR_RE = re.compile(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'')
+    _COMMENT_RE = re.compile(r"/\*.*?\*/|//[^\n]*", re.DOTALL)
 
     def stage(self, source: Path, workdir: Path) -> Staged:
         text = source.read_text(encoding="utf-8", errors="replace")
+        # Strip string/char literals first so a comment marker inside one (e.g. "/* not a
+        # comment */") isn't mistaken for a real comment; then strip comments so a leftover
+        # commented-out `public class` declaration can't be matched instead of the real one.
+        searchable = self._COMMENT_RE.sub(" ", self._STRING_OR_CHAR_RE.sub('""', text))
         # javac requires the file be named after the public class, which isn't necessarily the
         # first `class` in the file -- a helper class (e.g. a Node) may come before it.
-        match = self._PUBLIC_CLASS_RE.search(text) or self._CLASS_RE.search(text)
+        match = self._PUBLIC_CLASS_RE.search(searchable) or self._CLASS_RE.search(searchable)
         class_name = match.group(1) if match else "Main"
         shutil.copy(source, workdir / f"{class_name}.java")
         return Staged(

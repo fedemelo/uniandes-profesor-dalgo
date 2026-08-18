@@ -93,6 +93,35 @@ class LanguageStagingTests(unittest.TestCase):
         self.assertTrue((workdir / "Main.java").is_file())
         self.assertEqual(staged.run_cmd, ["java", "Main"])
 
+    def test_java_stage_ignores_a_commented_out_public_class(self):
+        source = self._write(
+            "anything.java",
+            "// public class OldSolution { }\n/* public class AlsoOld { } */\n"
+            "public class Solution {\n  public static void main(String[] a) {}\n}\n",
+        )
+        workdir = self.tmp / "work"
+        workdir.mkdir()
+
+        staged = languages.Java().stage(source, workdir)
+
+        self.assertTrue((workdir / "Solution.java").is_file())
+        self.assertEqual(staged.compile_cmd, ["javac", "Solution.java"])
+        self.assertEqual(staged.run_cmd, ["java", "Solution"])
+
+    def test_java_stage_ignores_a_comment_marker_inside_a_string_literal(self):
+        source = self._write(
+            "anything.java",
+            'public class Solution {\n  String s = "/* not a comment */";\n'
+            "  public static void main(String[] a) {}\n}\n",
+        )
+        workdir = self.tmp / "work"
+        workdir.mkdir()
+
+        staged = languages.Java().stage(source, workdir)
+
+        self.assertTrue((workdir / "Solution.java").is_file())
+        self.assertEqual(staged.run_cmd, ["java", "Solution"])
+
     def test_detect_dispatches_by_extension(self):
         self.assertIsInstance(languages.detect(Path("sol.py")), languages.Python)
         self.assertIsInstance(languages.detect(Path("Sol.java")), languages.Java)
