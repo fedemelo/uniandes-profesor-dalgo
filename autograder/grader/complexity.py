@@ -133,5 +133,5 @@ def _probe_submission(
         return SubmissionCheck(submission, "no_points", points)
 
     largest = points[-1]
-    flagged = largest.n != reference_max_size or largest.elapsed > threshold
+    flagged = largest.n < reference_max_size or largest.elapsed > threshold
     return SubmissionCheck(submission, "flagged" if flagged else "ok", points)
