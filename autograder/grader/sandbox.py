@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import subprocess
 import tempfile
+import threading
 import time
 import uuid
 from dataclasses import dataclass
@@ -14,9 +15,17 @@ _DOCKER_HARDENING = [
     "--memory", "256m",
     "--cpus", "1",
     "--pids-limit", "128",
+    "--ulimit", "fsize=67108864",  # 64 MB per written file, so a runaway write loop can't fill host disk
     "--cap-drop", "ALL",
     "--security-opt", "no-new-privileges",
 ]
+
+# Per-stream cap on what we'll buffer from a container's stdout/stderr, well above any legitimate
+# homework output. `--memory` above only bounds the container's own cgroup -- it has no effect on
+# the pipe buffer this process accumulates, so without this cap a submission with a runaway/
+# accidental infinite print loop could grow this process's memory unbounded for the whole timeout.
+_MAX_OUTPUT_BYTES = 10 * 1024 * 1024
+_POLL_INTERVAL = 0.05
 
 
 @dataclass(frozen=True)
@@ -26,6 +35,26 @@ class RunResult:
     returncode: int | None
     elapsed: float
     timed_out: bool
+
+
+def _read_capped(stream, cap: int, box: dict) -> None:
+    """Read `stream` to EOF, keeping only the first `cap` bytes. Reading (and discarding) past the
+    cap rather than stopping matters: once the container is killed for exceeding it, the still-
+    running `docker run` client keeps trying to write further output into this pipe, and abandoning
+    the read here would leave it blocked on that write forever, wedging `proc.wait()`.
+    """
+    chunks = []
+    total = 0
+    while True:
+        chunk = stream.read(65536)
+        if not chunk:
+            break
+        if total < cap:
+            chunks.append(chunk)
+            total += len(chunk)
+            if total >= cap:
+                box["exceeded"] = True
+    box["data"] = b"".join(chunks)
 
 
 def run(workdir: Path, cmd: list[str], *, stdin: bytes = b"", timeout: float) -> RunResult:
@@ -40,25 +69,58 @@ def run(workdir: Path, cmd: list[str], *, stdin: bytes = b"", timeout: float) ->
         *cmd,
     ]
     start = time.monotonic()
-    try:
-        proc = subprocess.run(docker_cmd, input=stdin, capture_output=True, timeout=timeout)
-    except subprocess.TimeoutExpired as exc:
-        # `--rm` cleans up the container on normal exit, but killing our client
-        # process here does not stop the container itself — do that explicitly.
+    proc = subprocess.Popen(docker_cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    def _feed_stdin() -> None:
+        try:
+            proc.stdin.write(stdin)
+        except (BrokenPipeError, OSError):
+            pass
+        finally:
+            try:
+                proc.stdin.close()
+            except OSError:
+                pass
+
+    stdout_box: dict = {}
+    stderr_box: dict = {}
+    # Draining stdin/stdout/stderr concurrently (rather than sequentially) avoids the classic pipe
+    # deadlock: a submission that interleaves reading input with printing output can otherwise
+    # block on a full stdout pipe while we're still writing stdin, and vice versa.
+    threads = [
+        threading.Thread(target=_feed_stdin),
+        threading.Thread(target=_read_capped, args=(proc.stdout, _MAX_OUTPUT_BYTES, stdout_box)),
+        threading.Thread(target=_read_capped, args=(proc.stderr, _MAX_OUTPUT_BYTES, stderr_box)),
+    ]
+    for thread in threads:
+        thread.start()
+
+    deadline = start + timeout
+    timed_out = False
+    while proc.poll() is None and not stdout_box.get("exceeded") and not stderr_box.get("exceeded"):
+        if time.monotonic() >= deadline:
+            timed_out = True
+            break
+        time.sleep(_POLL_INTERVAL)
+    output_exceeded = bool(stdout_box.get("exceeded") or stderr_box.get("exceeded"))
+
+    if timed_out or output_exceeded:
+        # `--rm` cleans up the container on normal exit, but killing our client process here does
+        # not stop the container itself — do that explicitly.
         subprocess.run(["docker", "kill", container_name], capture_output=True)
-        return RunResult(
-            stdout=exc.stdout or b"",
-            stderr=exc.stderr or b"",
-            returncode=None,
-            elapsed=time.monotonic() - start,
-            timed_out=True,
-        )
+    proc.wait()
+    for thread in threads:
+        thread.join(timeout=5)
+    proc.stdout.close()
+    proc.stderr.close()
+
+    killed = timed_out or output_exceeded
     return RunResult(
-        stdout=proc.stdout,
-        stderr=proc.stderr,
-        returncode=proc.returncode,
+        stdout=stdout_box.get("data", b""),
+        stderr=stderr_box.get("data", b""),
+        returncode=None if killed else proc.returncode,
         elapsed=time.monotonic() - start,
-        timed_out=False,
+        timed_out=killed,
     )
 
 

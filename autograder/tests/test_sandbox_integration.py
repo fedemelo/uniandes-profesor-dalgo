@@ -76,6 +76,34 @@ class SandboxIntegrationTests(unittest.TestCase):
         run_result = sandbox.run(self.workdir, ["./main"], stdin=b"2 3", timeout=10.0)
         self.assertEqual(run_result.stdout.strip(), b"5")
 
+    def test_runaway_output_is_capped_instead_of_buffered_forever(self):
+        (self.workdir / "main.py").write_text("while True:\n    print('x' * 1000)\n")
+
+        result = sandbox.run(self.workdir, ["python3", "main.py"], timeout=15.0)
+
+        self.assertTrue(result.timed_out)
+        self.assertLessEqual(len(result.stdout), sandbox._MAX_OUTPUT_BYTES + 65536)
+        # If the cap didn't cut it short, this would run for the full 15s timeout instead.
+        self.assertLess(result.elapsed, 10.0)
+
+    def test_large_stdin_interleaved_with_output_does_not_deadlock(self):
+        # Reads and prints line-by-line rather than all at once, so a large enough input can fill
+        # the stdout pipe while we're still writing stdin -- the scenario the concurrent
+        # stdin-write/stdout-read threads in sandbox.run guard against.
+        (self.workdir / "main.py").write_text(
+            "import sys\n"
+            "for line in sys.stdin:\n"
+            "    sys.stdout.write(line)\n"
+        )
+        stdin = ("line %d\n" % i for i in range(200_000))
+        payload = "".join(stdin).encode()
+
+        result = sandbox.run(self.workdir, ["python3", "main.py"], stdin=payload, timeout=30.0)
+
+        self.assertFalse(result.timed_out)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, payload)
+
     def test_compiles_and_runs_java(self):
         (self.workdir / "Solution.java").write_text(
             "import java.util.Scanner;\n"
