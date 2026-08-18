@@ -43,12 +43,15 @@ class C(Language):
 
 class Java(Language):
     extensions = (".java",)
-    _CLASS_RE = re.compile(r"\bpublic\s+class\s+(\w+)|\bclass\s+(\w+)")
+    _PUBLIC_CLASS_RE = re.compile(r"\bpublic\s+class\s+(\w+)")
+    _CLASS_RE = re.compile(r"\bclass\s+(\w+)")
 
     def stage(self, source: Path, workdir: Path) -> Staged:
         text = source.read_text(encoding="utf-8", errors="replace")
-        match = self._CLASS_RE.search(text)
-        class_name = next(g for g in (match.groups() if match else ()) if g) if match else "Main"
+        # javac requires the file be named after the public class, which isn't necessarily the
+        # first `class` in the file -- a helper class (e.g. a Node) may come before it.
+        match = self._PUBLIC_CLASS_RE.search(text) or self._CLASS_RE.search(text)
+        class_name = match.group(1) if match else "Main"
         shutil.copy(source, workdir / f"{class_name}.java")
         return Staged(
             compile_cmd=["javac", f"{class_name}.java"],

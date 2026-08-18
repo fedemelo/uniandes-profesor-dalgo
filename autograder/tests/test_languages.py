@@ -55,6 +55,20 @@ class LanguageStagingTests(unittest.TestCase):
         self.assertEqual(staged.compile_cmd, ["javac", "Solution.java"])
         self.assertEqual(staged.run_cmd, ["java", "Solution"])
 
+    def test_java_stage_prefers_public_class_over_a_helper_class_declared_first(self):
+        source = self._write(
+            "anything.java",
+            "class Node {\n  int val;\n}\n\npublic class Main {\n  public static void main(String[] a) {}\n}\n",
+        )
+        workdir = self.tmp / "work"
+        workdir.mkdir()
+
+        staged = languages.Java().stage(source, workdir)
+
+        self.assertTrue((workdir / "Main.java").is_file())
+        self.assertEqual(staged.compile_cmd, ["javac", "Main.java"])
+        self.assertEqual(staged.run_cmd, ["java", "Main"])
+
     def test_java_stage_falls_back_when_no_class_found(self):
         source = self._write("weird.java", "// not really java\n")
         workdir = self.tmp / "work"
