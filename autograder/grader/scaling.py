@@ -38,7 +38,8 @@ def measure(
     run_cmd: list[str], workdir: Path, inputs_by_size: dict[int, bytes], *, timeout: float, repeats: int
 ) -> list[SizePoint]:
     """Time `run_cmd` at each size, taking the min over `repeats` runs to denoise. Stops at the
-    first size that times out, since larger sizes would only be slower.
+    first size that times out or crashes, since larger sizes would only be slower or no more likely
+    to succeed.
     """
     points = []
     for n in sorted(inputs_by_size):
