@@ -5,10 +5,10 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import languages, reference, sandbox, scaling
+from . import languages, reference, sandbox, scaling, staging
+from .staging import CompileFailure
 from .submission import Submission
 
-COMPILE_TIMEOUT = 30.0
 RUN_TIMEOUT = 30.0
 REPEATS = 2
 SAFETY_FACTOR = 15.0  # vs. the reference solution's own time at the largest size it reaches
@@ -120,12 +120,9 @@ def _probe_submission(
 
     with tempfile.TemporaryDirectory(prefix=f"dalgo-scale-{submission.student_id}-") as tmp:
         workdir = Path(tmp)
-        staged = language.stage(submission.code_file, workdir)
-
-        if staged.compile_cmd:
-            compile_result = sandbox.run(workdir, staged.compile_cmd, timeout=COMPILE_TIMEOUT)
-            if compile_result.timed_out or compile_result.returncode != 0:
-                return SubmissionCheck(submission, "compile_error", [])
+        staged = staging.stage_and_compile(language, submission.code_file, workdir)
+        if isinstance(staged, CompileFailure):
+            return SubmissionCheck(submission, "compile_error", [])
 
         points = scaling.measure(staged.run_cmd, workdir, inputs_by_size, timeout=RUN_TIMEOUT, repeats=REPEATS)
 

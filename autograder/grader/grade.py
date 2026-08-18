@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-import shutil
 import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from . import languages, sandbox
+from . import languages, sandbox, staging
+from .staging import CompileFailure
 from .submission import Submission
 from .testcases import TestCase, normalize
-
-COMPILE_TIMEOUT = 30.0
 
 
 @dataclass(frozen=True)
@@ -45,17 +43,14 @@ def grade_submission(submission: Submission, test_cases: list[TestCase], timeout
 
     with tempfile.TemporaryDirectory(prefix=f"dalgo-{submission.student_id}-") as tmp:
         workdir = Path(tmp)
-        staged = language.stage(submission.code_file, workdir)
-
-        if staged.compile_cmd:
-            compile_result = sandbox.run(workdir, staged.compile_cmd, timeout=COMPILE_TIMEOUT)
-            if compile_result.timed_out or compile_result.returncode != 0:
-                return SubmissionResult(
-                    submission,
-                    status="compile_error",
-                    language=type(language).__name__,
-                    compile_stderr=compile_result.stderr.decode("utf-8", errors="replace"),
-                )
+        staged = staging.stage_and_compile(language, submission.code_file, workdir)
+        if isinstance(staged, CompileFailure):
+            return SubmissionResult(
+                submission,
+                status="compile_error",
+                language=type(language).__name__,
+                compile_stderr=staged.stderr,
+            )
 
         case_results = []
         for case in test_cases:
