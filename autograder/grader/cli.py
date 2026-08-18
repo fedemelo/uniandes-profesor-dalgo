@@ -13,7 +13,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 AUTOGRADER_ROOT = REPO_ROOT / "autograder"
 
 
-def _find_export_zip(homework: str) -> Path:
+def find_export_zip(homework: str) -> Path:
     submissions_dir = AUTOGRADER_ROOT / "submissions" / homework
     zips = sorted(submissions_dir.glob("*.zip"))
     if not zips:
@@ -55,7 +55,7 @@ def main() -> None:
     if not test_cases:
         sys.exit(f"No test cases found under {homework_dir / 'tests'}. Generate them first.")
 
-    export_zip = args.zip or _find_export_zip(args.homework)
+    export_zip = args.zip or find_export_zip(args.homework)
 
     sandbox.warm_up()  # avoid mistaking Docker's one-off cold-start cost for a slow case/submission
 

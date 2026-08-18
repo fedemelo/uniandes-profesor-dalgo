@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 from . import complexity, extract, provenance, report, sandbox
-from .cli import AUTOGRADER_ROOT, REPO_ROOT, _find_export_zip
+from .cli import AUTOGRADER_ROOT, REPO_ROOT, find_export_zip
 from .safe_zip import UnsafeZipError
 
 
@@ -30,7 +30,7 @@ def main() -> None:
         )
 
     homework_dir = REPO_ROOT / "homework" / args.homework
-    export_zip = args.zip or _find_export_zip(args.homework)
+    export_zip = args.zip or find_export_zip(args.homework)
 
     work_dir = AUTOGRADER_ROOT / "work" / f"{args.homework}-complexity"
     if work_dir.exists():
