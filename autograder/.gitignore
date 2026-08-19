@@ -1,0 +1,5 @@
+submissions/*/*
+!submissions/*/.gitkeep
+results/
+work/
+__pycache__/
