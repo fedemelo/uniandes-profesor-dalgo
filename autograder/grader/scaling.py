@@ -24,7 +24,7 @@ def truncate_array_case(seed: Path, n: int) -> bytes:
 # stated complexity requirement need an entry here; add one by writing a scaler for that
 # homework's per-case input grammar.
 SCALERS: dict[str, tuple[str, Callable[[Path, int], bytes]]] = {
-    "2-dividir-y-conquistar": ("case_12.in", truncate_array_case),
+    "2-dividir-y-conquistar": ("case_17.in", truncate_array_case),
 }
 
 
