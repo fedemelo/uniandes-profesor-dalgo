@@ -135,6 +135,60 @@ class LoadSubmissionsTests(unittest.TestCase):
         self.assertEqual(submissions[0].code_file.name, "sol.py")
         self.assertEqual(submissions[0].code_file.read_bytes(), b"print('real')")
 
+    def _make_late_zip(self, late_dir: Path, zip_name: str, files: dict[str, bytes]) -> None:
+        late_dir.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(late_dir / zip_name, "w", zipfile.ZIP_DEFLATED) as zf:
+            for filename, content in files.items():
+                zf.writestr(filename, content)
+
+    def test_folds_in_a_late_submission_via_mapping_csv(self):
+        export = self.tmp / "submissions" / "export.zip"
+        export.parent.mkdir(parents=True)
+        _make_export_zip(export, {"11111-465221 - On Time - 15 de agosto de 2026 1200": {"sol.py": b"print(1)"}})
+
+        late_dir = export.parent / "late-submissions"
+        self._make_late_zip(late_dir, "Tarea 2.zip", {"Tarea 2/solucion.py": b"print('late')"})
+        (late_dir / "mapping.csv").write_text("zip,name\nTarea 2.zip,Baruc Jeronimo Triana Bastidas\n")
+
+        submissions = extract.load_submissions(export, self.tmp / "work")
+
+        self.assertEqual(len(submissions), 2)
+        late = next(s for s in submissions if s.name == "Baruc Jeronimo Triana Bastidas")
+        self.assertEqual(late.code_file.read_bytes(), b"print('late')")
+        self.assertTrue(any("late submission" in note for note in late.notes))
+
+    def test_late_submission_missing_from_mapping_raises(self):
+        export = self.tmp / "submissions" / "export.zip"
+        export.parent.mkdir(parents=True)
+        _make_export_zip(export, {"11111-465221 - On Time - 15 de agosto de 2026 1200": {"sol.py": b"print(1)"}})
+
+        late_dir = export.parent / "late-submissions"
+        self._make_late_zip(late_dir, "Unmapped.zip", {"sol.py": b"print(1)"})
+        (late_dir / "mapping.csv").write_text("zip,name\nOther.zip,Someone Else\n")
+
+        with self.assertRaises(extract.MappingError):
+            extract.load_submissions(export, self.tmp / "work")
+
+    def test_late_submissions_without_mapping_csv_raises(self):
+        export = self.tmp / "submissions" / "export.zip"
+        export.parent.mkdir(parents=True)
+        _make_export_zip(export, {"11111-465221 - On Time - 15 de agosto de 2026 1200": {"sol.py": b"print(1)"}})
+
+        late_dir = export.parent / "late-submissions"
+        self._make_late_zip(late_dir, "Tarea 2.zip", {"sol.py": b"print(1)"})
+
+        with self.assertRaises(extract.MappingError):
+            extract.load_submissions(export, self.tmp / "work")
+
+    def test_no_late_submissions_dir_is_a_noop(self):
+        export = self.tmp / "submissions" / "export.zip"
+        export.parent.mkdir(parents=True)
+        _make_export_zip(export, {"11111-465221 - On Time - 15 de agosto de 2026 1200": {"sol.py": b"print(1)"}})
+
+        submissions = extract.load_submissions(export, self.tmp / "work")
+
+        self.assertEqual(len(submissions), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

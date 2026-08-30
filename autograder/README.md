@@ -36,6 +36,32 @@ autograder/submissions/<homework-slug>/
 e.g. `autograder/submissions/2-dividir-y-conquistar/Tarea semana 2 ... .zip`. Exactly one zip
 should live in that folder at a time.
 
+### Late / off-Brightspace submissions
+
+For students who send you their work another way instead of through Brightspace, drop each
+student's zip (whatever they sent you, as-is) into:
+
+```
+autograder/submissions/<homework-slug>/late-submissions/
+```
+
+one zip per student. These zips don't carry Brightspace's `id-course - Name - timestamp` folder
+naming, so you also need a `mapping.csv` in that same folder mapping each zip's filename to the
+student's name:
+
+```
+zip,name
+Tarea 2.zip,Baruc Jeronimo Triana Bastidas
+```
+
+Grading fails fast (before touching anything) if a zip in `late-submissions/` has no matching row
+in `mapping.csv`. Late submissions are folded into the same run as the Brightspace group — they
+show up in the same summary, CSV, and JSON output, tagged with a "late submission" note; there's
+no separate timestamp or Brightspace ID for them (that ID is Brightspace's internal one anyway,
+not the university ID, so it isn't meaningful even for on-time submissions). If a late submission's
+name matches an on-time one, both are kept and a warning is printed so you can check for a
+duplicate by hand.
+
 ## Grading
 
 ```

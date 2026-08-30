@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import re
 from pathlib import Path
 
@@ -10,6 +11,16 @@ from .submission import Submission
 # Brightspace export folder name, e.g.:
 # "34561-465221 - Juan Diego Acuña - 14 de agosto de 2026 2334"
 _FOLDER_RE = re.compile(r"^(?P<student_id>\d+)-(?P<course_id>\d+) - (?P<name>.+) - (?P<timestamp>.+)$")
+
+# Submissions collected outside Brightspace (e.g. emailed in after the fact) live in a
+# late-submissions/ folder next to the Brightspace export zip: one zip per student, mapped to a
+# name via mapping.csv since those zips carry no Brightspace-style identifying folder name.
+_LATE_SUBMISSIONS_DIRNAME = "late-submissions"
+_MAPPING_FILENAME = "mapping.csv"
+
+
+class MappingError(Exception):
+    """Raised when late-submissions/mapping.csv is missing or doesn't cover every zip there."""
 
 _CODE_EXTENSIONS = {ext for language in REGISTRY for ext in language.extensions}
 _MAX_NESTED_ZIP_DEPTH = 3
@@ -86,8 +97,77 @@ def _find_code_file(folder: Path, notes: list[str]) -> Path | None:
     return candidates[0]
 
 
+def _slugify(name: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+
+
+def _read_mapping(mapping_file: Path) -> dict[str, str]:
+    with mapping_file.open(newline="", encoding="utf-8") as f:
+        rows = [row for row in csv.reader(f) if row and row != ["zip", "name"]]
+    mapping: dict[str, str] = {}
+    for row in rows:
+        if len(row) != 2:
+            raise MappingError(f"{mapping_file}: malformed row {row!r}, expected 'zip,name'")
+        zip_name, student_name = row
+        mapping[zip_name.strip()] = student_name.strip()
+    return mapping
+
+
+def _load_late_submissions(late_dir: Path, extract_root: Path) -> list[Submission]:
+    """Load submissions collected outside Brightspace: late_dir holds one zip per student, named
+    to student name by late_dir/mapping.csv (a hand-maintained 'zip,name' CSV), since those zips
+    carry none of the identifying folder-naming convention Brightspace exports have.
+    """
+    zips = sorted(late_dir.glob("*.zip"))
+    if not zips:
+        return []
+
+    mapping_file = late_dir / _MAPPING_FILENAME
+    if not mapping_file.is_file():
+        raise MappingError(
+            f"{late_dir} has {len(zips)} zip(s) but no {_MAPPING_FILENAME}. "
+            f"Add one mapping each zip filename to a student name, e.g. '{zips[0].name},Full Name'."
+        )
+    mapping = _read_mapping(mapping_file)
+
+    unmapped = [z.name for z in zips if z.name not in mapping]
+    if unmapped:
+        raise MappingError(f"{mapping_file} has no entry for: {', '.join(unmapped)}")
+
+    submissions = []
+    for zip_path in zips:
+        name = mapping[zip_path.name]
+        notes: list[str] = ["late submission: collected outside Brightspace via late-submissions/"]
+        target = extract_root / f"late-{_slugify(name)}"
+        target.mkdir(exist_ok=True)
+        try:
+            safe_extractall(zip_path, target)
+        except UnsafeZipError as exc:
+            notes.append(f"rejected {zip_path.name}: {exc}")
+            code_file = None
+        else:
+            code_file = _find_code_file(target, notes)
+            if code_file is None:
+                notes.append("no code file found")
+
+        submissions.append(
+            Submission(
+                student_id=f"late-{_slugify(name)}",
+                name=name,
+                timestamp="",
+                folder=target,
+                code_file=code_file,
+                notes=notes,
+            )
+        )
+
+    return submissions
+
+
 def load_submissions(export_zip: Path, extract_root: Path) -> list[Submission]:
-    """Extract a raw Brightspace assignment-download zip and locate each student's code file."""
+    """Extract a raw Brightspace assignment-download zip and locate each student's code file, then
+    fold in any late-submissions/ zips (see _load_late_submissions) sitting next to the export zip.
+    """
     extract_root.mkdir(parents=True, exist_ok=True)
     safe_extractall(export_zip, extract_root)
 
@@ -118,4 +198,13 @@ def load_submissions(export_zip: Path, extract_root: Path) -> list[Submission]:
         if existing is None or _timestamp_key(submission.timestamp) >= _timestamp_key(existing.timestamp):
             by_student[submission.student_id] = submission
 
-    return sorted(by_student.values(), key=lambda s: s.name)
+    late_submissions = _load_late_submissions(export_zip.parent / _LATE_SUBMISSIONS_DIRNAME, extract_root)
+    by_name = {s.name.strip().lower(): s for s in by_student.values()}
+    for late in late_submissions:
+        key = late.name.strip().lower()
+        if key in by_name:
+            late.notes.append(f"name matches an on-time Brightspace submission ({by_name[key].student_id}); check for a duplicate")
+            print(f"! {late.name!r} appears both in the Brightspace export and in late-submissions/")
+
+    all_submissions = list(by_student.values()) + late_submissions
+    return sorted(all_submissions, key=lambda s: s.name)

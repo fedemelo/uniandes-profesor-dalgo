@@ -72,6 +72,8 @@ def main() -> None:
         submissions = extract.load_submissions(export_zip, work_dir)
     except UnsafeZipError as exc:
         sys.exit(f"Rejected {export_zip}: {exc}")
+    except extract.MappingError as exc:
+        sys.exit(str(exc))
     if not submissions:
         sys.exit(f"No submission folders recognized in {export_zip}.")
 
