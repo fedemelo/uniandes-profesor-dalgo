@@ -103,7 +103,8 @@ FORCE:
 	fi; \
 	html="/tmp/$$(basename "$${target%.md}").html"; \
 	pandoc "$$target" -o "$$html" --standalone; \
-	osascript -e "set the clipboard to (read (POSIX file \"$$html\") as «class HTML»)"
+	osascript -e "set the clipboard to (read (POSIX file \"$$html\") as «class HTML»)"; \
+	echo "Copied '$$target' as rich text to clipboard"
 
 clean:  # Remove all temporary files
 	find . \
