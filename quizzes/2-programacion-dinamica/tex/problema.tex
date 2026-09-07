@@ -1,0 +1,26 @@
+\section{Problema}
+Una estación de radio vende un bloque publicitario de duración fija, dividido en pautas de duración entera. Hay una tarifa fija a la que se vende cada duración posible.
+
+Se quiere partir el bloque completo en pautas, cada una de al menos una unidad de duración, para maximizar el ingreso total. Diseñe un algoritmo de programación dinámica para ello.
+
+\begin{itemize}
+  \item Entrada: Un arreglo \inline{tarifa} donde \inline{tarifa[i]} es el precio de una pauta de duración $i$.
+  \item Salida: El ingreso máximo obtenible al partir un bloque de duración $n$ en pautas.
+\end{itemize}
+
+E.g., para \inline{tarifa = [0, 3, 5, 8, 9]}, el mejor reparto de un bloque de duración $4$ es en cuatro pautas de duración $1$, con un ingreso de $12$.
+
+\section{Entregables}
+
+\begin{enumerate}
+  \item (2 puntos) Defina una relación de recurrencia que resuelve el problema. Explique en palabras qué significa la función y qué significa cada variable. Sea sucinto.
+  \item (1 punto) ¿Cuánto espacio requiere una solución de programación dinámica para este problema? ¿Se puede optimizar? Justifique su respuesta con algún modelo matemático del problema o de la solución.
+  \item (2 puntos) Implemente una solución top-down o bottom-up (a su elección) en Python, Java, C, C++, JavaScript o TypeScript.
+\end{enumerate}
+
+\section{Rúbrica}
+
+\begin{itemize}
+  \item Si declara no saber responder un numeral, se acredita automáticamente el 20\% de su valor. Puede escribir: ``No sé''.
+  \item Si deja un numeral en blanco, el siguiente asume su valor. E.g., si el numeral 1 queda en blanco, el numeral 2 vale 3 puntos.
+\end{itemize}
