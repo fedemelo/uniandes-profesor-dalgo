@@ -44,10 +44,15 @@ QUIZ_DIRS := $(sort $(shell find quizzes -mindepth 1 -maxdepth 1 -type d -name '
 QUIZ_NUMS := $(foreach d,$(QUIZ_DIRS),$(word 1,$(subst -, ,$(notdir $(d)))))
 $(foreach d,$(QUIZ_DIRS),$(eval QUIZ_DIR_$(word 1,$(subst -, ,$(notdir $(d)))) := $(d)))
 
-# hw1..hwN and qz1..qzN are deliberately left out: listing them here
-# would give each an empty explicit rule that shadows the hw%/qz%
+# proyectos/parte-N/ -> N
+PROJECT_DIRS := $(sort $(shell find proyectos -mindepth 1 -maxdepth 1 -type d -name 'parte-*' 2>/dev/null))
+PROJECT_NUMS := $(foreach d,$(PROJECT_DIRS),$(word 2,$(subst -, ,$(notdir $(d)))))
+$(foreach d,$(PROJECT_DIRS),$(eval PROJECT_DIR_$(word 2,$(subst -, ,$(notdir $(d)))) := $(d)))
+
+# hw1..hwN, qz1..qzN and py1..pyN are deliberately left out: listing them
+# here would give each an empty explicit rule that shadows the hw%/qz%/py%
 # pattern rules below, since they'd never gain a recipe of their own.
-.PHONY: course-docs hws qzs $(SIMPLE_DOCS) $(BIBER_DOCS)
+.PHONY: course-docs hws qzs pys $(SIMPLE_DOCS) $(BIBER_DOCS)
 
 $(SIMPLE_DOCS):
 	$(call compile,$(DOC_DIR_$@),$(DOC_DIR_$@),$@)
@@ -76,6 +81,14 @@ qz%:
 
 qzs:
 	$(foreach n,$(QUIZ_NUMS),$(MAKE) qz$(n);)
+
+# Projects only have a solution driver: the statement is the coordinator's
+# own proposal document (docx/pdf), not authored here as a tex problema.
+py%:
+	$(call compile,$(PROJECT_DIR_$*)/solucion,$(PROJECT_DIR_$*),proyecto-parte-$*-solucion)
+
+pys:
+	$(foreach n,$(PROJECT_NUMS),$(MAKE) py$(n);)
 
 # Announcements: plain markdown, anywhere, one file per announcement.
 # make path/to/file.md`  
