@@ -1,0 +1,15 @@
+Qué más muchachos,
+
+El lunes hablamos sobre caminos más cortos. 
+
+Definimos formalmente camino y qué entendemos por más corto (en grafos ponderados, longitud = peso). Hablamos de por qué resolver el problema de caminos más cortos con fuente única resuelve varios otros problemas y de por qué todos tienen subestructura óptima.
+
+Luego entramos ya en lo bueno Vimos por qué no queremos ciclos negativos. Presentamos el la idea de la relajación. Y con eso, implementamos y estudiamos Bellman-Ford.
+
+Acabamos con un abrebocas a Dijkstra, un viejo conocido de ustedes.
+
+Como dijeron todos al unísono en clase: el miércoles hay quiz de Bellman-Ford!
+
+Nos vemos el miércoles,
+
+Fede
