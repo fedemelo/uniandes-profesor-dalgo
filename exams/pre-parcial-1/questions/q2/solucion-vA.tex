@@ -1,0 +1,26 @@
+\begin{enumerate}
+  \item La matriz es simétrica y sin ceros en la diagonal: es un grafo no dirigido con aristas $\{v_1,v_2\}$, $\{v_1,v_4\}$, $\{v_2,v_3\}$, $\{v_3,v_5\}$, $\{v_4,v_5\}$, $\{v_4,v_6\}$, $\{v_5,v_6\}$.
+
+  \item Listas de adyacencia (orden ascendente, el orden en que BFS las recorre): $v_1{:}\ v_2,v_4$ --- $v_2{:}\ v_1,v_3$ --- $v_3{:}\ v_2,v_5$ --- $v_4{:}\ v_1,v_5,v_6$ --- $v_5{:}\ v_3,v_4,v_6$ --- $v_6{:}\ v_4,v_5$.
+
+  Ejecutando BFS desde $v_3$. En el pseudocódigo usual, cada iteración del \texttt{while} primero desencola un vértice y \emph{después} recorre sus vecinos (encolando los nuevos y fijando su predecesor); ambas cosas ocurren en la misma iteración, pero en ese orden. Por eso, lo que hay en la cola y en los predecesores \emph{justo al desencolar} un vértice $u$ es lo que quedó tras procesar los vecinos del vértice desencolado \emph{antes} que $u$ --- todavía no incluye lo que el propio $u$ va a agregar, porque eso pasa después dentro de esa misma iteración:
+
+\begin{center}
+\begin{tabular}{|c|c|c|l|}
+\hline
+\textbf{Paso} & \textbf{Desencolado} & \textbf{Cola justo tras desencolar} & \textbf{Predecesores justo tras desencolar} \\
+\hline
+1 & $v_3$ & $[\,]$ & $v_3{:}-$ (fuente, nada más todavía) \\
+2 & $v_2$ & $[v_5]$ & $+\ v_2{:}v_3,\ v_5{:}v_3$ \\
+3 & $v_5$ & $[v_1]$ & $+\ v_1{:}v_2$ \\
+4 & $v_1$ & $[v_4, v_6]$ & $+\ v_4{:}v_5,\ v_6{:}v_5$ \\
+5 & $v_4$ & $[v_6]$ & (sin cambios: $v_2,v_4$ ya visitados) \\
+6 & $v_6$ & $[\,]$ & (sin cambios: $v_1,v_5,v_6$ ya visitados) \\
+\hline
+\end{tabular}
+\end{center}
+
+  (La fila $k$ registra lo que dejaron los vecinos del vértice desencolado en el paso $k-1$; por ejemplo, la fila 2 --- justo tras desencolar $v_2$ --- ya trae $v_2{:}v_3$ y $v_5{:}v_3$ porque esos se fijaron al procesar los vecinos de $v_3$ en el paso 1, antes de este desencolado.)
+
+  Arreglo de predecesores final: $\text{pred} = [v_1{:}v_2,\ v_2{:}v_3,\ v_3{:}-,\ v_4{:}v_5,\ v_5{:}v_3,\ v_6{:}v_5]$.
+\end{enumerate}

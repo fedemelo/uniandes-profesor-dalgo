@@ -1,0 +1,70 @@
+La solución original calcula, para cada órbita $i$ en orden creciente, dos cosas por posición $j$: $B(i,j)$ (el mejor costo con el que se \emph{entra} a $(i,j)$ desde fuera de la órbita, ya sea por ser la entrada del campo o por un portal) y $E(i,j)$ (el mejor costo tras moverse dentro de la órbita $i$ hasta $j$). Para recuperar la ruta basta con recordar, además del costo, \emph{de dónde} vino cada uno de esos dos valores:
+
+\begin{itemize}
+  \item \texttt{origen\_externo[i][j]}: cómo se llegó a $B(i,j)$ --- \texttt{\textquotedbl ENTRADA\textquotedbl} si $(i,j) = (1,1)$, o la posición $(x_s, y_s)$ del portal que lo produjo.
+  \item \texttt{origen\_interno[i][j]}: la posición $k$ de la órbita $i$ desde la que se caminó (en línea recta, en uno de los dos barridos) hasta llegar a $j$ con costo $E(i,j)$.
+\end{itemize}
+
+Ambos se llenan con el mismo trabajo $\Theta(1)$ por posición que ya hace la solución original al actualizar el mínimo acumulado de cada barrido, así que guardarlos no cambia la complejidad: sigue siendo $\Theta(nm)$ en tiempo y $\Theta(nm)$ en espacio.
+
+Para reconstruir la ruta se parte de $(n,m)$ y se deshacen los pasos: se camina en línea recta de \texttt{origen\_interno[i][j]} a $j$ dentro de la órbita $i$, agregando cada posición intermedia, y desde ahí se salta a \texttt{origen\_externo} --- que es o bien la entrada (fin de la reconstrucción) o la posición de un portal en una órbita anterior, desde la que se repite el proceso.
+
+\begin{pseudocode}
+def energia_minima_con_ruta(n, m, e, portales):
+    INF = float("inf")
+    A = [[INF] * m for _ in range(n)]
+    A[0][0] = 0
+
+    origen_externo = [[None] * m for _ in range(n)]
+    origen_externo[0][0] = "ENTRADA"
+    origen_interno = [[None] * m for _ in range(n)]
+
+    salientes = [[] for _ in range(n)]
+    for xs, ys, xe, ye in portales:
+        salientes[xs].append((ys, xe, ye))
+
+    for i in range(n):
+        fila_a, ei = A[i], e[i]
+        fila_dp = [INF] * m
+        interno = origen_interno[i]
+
+        mejor, mejor_k = INF, None
+        for j in range(m):
+            candidato = fila_a[j] - j * ei
+            if candidato < mejor:
+                mejor, mejor_k = candidato, j
+            fila_dp[j] = mejor + j * ei
+            interno[j] = mejor_k
+
+        mejor, mejor_k = INF, None
+        for j in range(m - 1, -1, -1):
+            candidato = fila_a[j] + j * ei
+            if candidato < mejor:
+                mejor, mejor_k = candidato, j
+            candidato = mejor - j * ei
+            if candidato < fila_dp[j]:
+                fila_dp[j], interno[j] = candidato, mejor_k
+
+        for ys, xe, ye in salientes[i]:
+            if fila_dp[ys] < A[xe][ye]:
+                A[xe][ye] = fila_dp[ys]
+                origen_externo[xe][ye] = (i, ys)
+
+    if fila_dp[m - 1] == INF:
+        return INF, None
+
+    ruta = []
+    i, j = n - 1, m - 1
+    while True:
+        k = origen_interno[i][j]
+        paso = 1 if j >= k else -1
+        for pos in range(j, k - paso, -paso):
+            ruta.append((i, pos))
+        destino_previo = origen_externo[i][k]
+        if destino_previo == "ENTRADA":
+            break
+        i, j = destino_previo
+
+    ruta.reverse()
+    return fila_dp[m - 1], ruta
+\end{pseudocode}

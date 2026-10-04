@@ -1,0 +1,22 @@
+\begin{enumerate}
+  \item Las listas dan las aristas $\{1,3\}$, $\{1,5\}$, $\{2,3\}$, $\{2,6\}$, $\{3,4\}$, $\{4,5\}$, $\{5,6\}$ (cada arista aparece dos veces, una en cada extremo, por ser no dirigido): $1{:}\ 3,5$ --- $2{:}\ 3,6$ --- $3{:}\ 1,2,4$ --- $4{:}\ 3,5$ --- $5{:}\ 1,4,6$ --- $6{:}\ 2,5$.
+
+  \item Ejecutando DFS (recursivo) desde $1$, siguiendo el orden en que aparece cada vecino en su lista. A diferencia de BFS, aquí no hay un desfase entre ``visitar'' y ``registrar'': el predecesor de un vértice se fija en el llamador \emph{antes} de la llamada recursiva que lo visita, y esa llamada ya está en la pila en el instante mismo de la visita. Por eso cada fila de la tabla sí refleja, sin retraso, el estado justo al visitar ese vértice:
+
+\begin{center}
+\begin{tabular}{|c|c|c|l|}
+\hline
+\textbf{Paso} & \textbf{Visitado} & \textbf{Pila de llamadas} & \textbf{Predecesores (acumulado)} \\
+\hline
+1 & $1$ & $[1]$ & --- \\
+2 & $3$ & $[1,3]$ & $3{:}1$ \\
+3 & $2$ & $[1,3,2]$ & $+\ 2{:}3$ \\
+4 & $6$ & $[1,3,2,6]$ & $+\ 6{:}2$ \\
+5 & $5$ & $[1,3,2,6,5]$ & $+\ 5{:}6$ \\
+6 & $4$ & $[1,3,2,6,5,4]$ & $+\ 4{:}5$ \\
+\hline
+\end{tabular}
+\end{center}
+
+  Orden de visita: $1,3,2,6,5,4$. Arreglo de predecesores final: $\text{pred} = [1{:}-,\ 2{:}3,\ 3{:}1,\ 4{:}5,\ 5{:}6,\ 6{:}2]$.
+\end{enumerate}

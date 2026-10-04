@@ -1,0 +1,17 @@
+\begin{enumerate}
+  \item Solo cambia $B(i,j)$, que ahora debe sumar el costo $c$ del portal usado; $E(i,j)$ queda igual porque nunca miró el costo de \emph{cómo} se llegó a la órbita, solo el resultado $B(i,k)$:
+
+  \[
+  B(i,j) =
+  \begin{cases}
+  0 & \text{si } (i,j) = (1,1) \\
+  \min\limits_{(x_s,y_s,i,j,c) \,\in\, \text{portales}} \big(E(x_s,y_s) + c\big) & \text{si hay portales que llegan a } (i,j) \\
+  \infty & \text{en otro caso}
+  \end{cases}
+  \]
+  \[
+  E(i,j) = \min_{1 \le k \le m} \big( B(i,k) + e_i \cdot |j-k| \big)
+  \]
+
+  \item No cambia: $\Theta(nm)$ se mantiene. Sumar $c$ al construir $B(i,j)$ es trabajo $\Theta(1)$ adicional por portal, lo mismo que ya costaba consultar $E(x_s,y_s)$; los $p$ portales siguen aportando $\Theta(p) \subseteq \Theta(nm)$, y los dos barridos por órbita ($\Theta(m)$ cada una) no se tocan.
+\end{enumerate}
