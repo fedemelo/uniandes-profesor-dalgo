@@ -7,8 +7,8 @@ quizzes/N-nombre-kebab/
   Quiz N - Nombre.pdf            (built)
   Solución quiz N - Nombre.pdf   (built)
   tex/
-    problema.tex                 (statement, self-contained: what's asked IS the deliverable)
     quiz/
+      problema.tex                 (statement, self-contained: what's asked IS the deliverable)
       N-nombre-kebab.tex         (quiz driver)
     solucion/
       N-nombre-kebab-solucion.tex (solution driver)
@@ -24,9 +24,9 @@ Quizzes differ from `homework/` (see `homework/CLAUDE.md`) in several ways:
 - No reference `.py` implementation — quizzes are handwritten/on-site, not autograded.
 - Quizzes are numbered sequentially on their own track (`N` = quiz number), independent of homework week numbers — never say "semana" in a quiz title.
 - No `\dateout`/`\duedate` (nothing is assigned or turned in remotely) — instead `\presentationdate`, since quizzes are presented on-site in class.
-- Every quiz driver `\usepackage{quiz}` and ends with `\quizback` (after `\input{tex/problema}`, before `\end{document}`): it starts a fresh page with a full-page code grid, so the sheet prints statement-front / grid-back. Add no content after `\quizback`.
+- Every quiz driver `\usepackage{quiz}` and ends with `\quizback` (after `\input{tex/quiz/problema}`, before `\end{document}`): it starts a fresh page with a full-page code grid, so the sheet prints statement-front / grid-back. Add no content after `\quizback`.
 
-The quiz driver `\input`s only `tex/problema`. The solution driver `\input`s only `tex/solucion/solucion` (after `\soluciontrue`) — just the answer, no restated problem. The solution mirrors `problema.tex`'s items (item 1 has no solution to give — it's ungraded scratch space); it doesn't need `\quizback` since it isn't printed double-sided for students.
+The quiz driver `\input`s only `tex/quiz/problema`. The solution driver `\input`s only `tex/solucion/solucion` (after `\soluciontrue`) — just the answer, no restated problem. The solution mirrors `problema.tex`'s items (item 1 has no solution to give — it's ungraded scratch space); it doesn't need `\quizback` since it isn't printed double-sided for students.
 
 Both drivers set `\title`/`\professor`; only the quiz driver sets `\presentationdate`. Titles: `Quiz N: Nombre` / `Solución quiz N: Nombre`. Write the colon normally; the Makefile rewrites `": "` to `" - "` in the output filename (Bloque Neón rejects colons in filenames).
 
