@@ -1,0 +1,89 @@
+\question{10}{Considere un grafo representado por las siguientes listas de adyacencia:
+
+\begin{center}
+\begin{tikzpicture}[baseline=(current bounding box.center),
+  idxcell/.style={draw, minimum size=0.42cm, inner sep=0pt, outer sep=0pt},
+  slot/.style={draw, minimum size=0.42cm, inner sep=1pt, outer sep=0pt, font=\scriptsize},
+  -latex, thick,
+]
+  \node[idxcell]                    (idx0) at (0, 0) {};
+  \node[idxcell, below=0pt of idx0] (idx1) {};
+  \node[idxcell, below=0pt of idx1] (idx2) {};
+  \node[idxcell, below=0pt of idx2] (idx3) {};
+  \node[idxcell, below=0pt of idx3] (idx4) {};
+  \node[idxcell, below=0pt of idx4] (idx5) {};
+
+  \node[left=6pt of idx0] {$1$};
+  \node[left=6pt of idx1] {$2$};
+  \node[left=6pt of idx2] {$3$};
+  \node[left=6pt of idx3] {$4$};
+  \node[left=6pt of idx4] {$5$};
+  \node[left=6pt of idx5] {$6$};
+
+  % idx0 (v1): 3, 5
+  \node[slot, right=0.35cm of idx0] (r0a1) {3};
+  \node[slot, right=0pt of r0a1]    (r0a2) {};
+  \node[slot, right=0.35cm of r0a2] (r0b1) {5};
+  \node[slot, right=0pt of r0b1]    (r0b2) {};
+  \draw (idx0.center) -- (r0a1);
+  \draw (r0a2.center) -- (r0b1);
+
+  % idx1 (v2): 3, 6
+  \node[slot, right=0.35cm of idx1] (r1a1) {3};
+  \node[slot, right=0pt of r1a1]    (r1a2) {};
+  \node[slot, right=0.35cm of r1a2] (r1b1) {6};
+  \node[slot, right=0pt of r1b1]    (r1b2) {};
+  \draw (idx1.center) -- (r1a1);
+  \draw (r1a2.center) -- (r1b1);
+
+  % idx2 (v3): 1, 2, 4
+  \node[slot, right=0.35cm of idx2] (r2a1) {1};
+  \node[slot, right=0pt of r2a1]    (r2a2) {};
+  \node[slot, right=0.35cm of r2a2] (r2b1) {2};
+  \node[slot, right=0pt of r2b1]    (r2b2) {};
+  \node[slot, right=0.35cm of r2b2] (r2c1) {4};
+  \node[slot, right=0pt of r2c1]    (r2c2) {};
+  \draw (idx2.center) -- (r2a1);
+  \draw (r2a2.center) -- (r2b1);
+  \draw (r2b2.center) -- (r2c1);
+
+  % idx3 (v4): 3, 5
+  \node[slot, right=0.35cm of idx3] (r3a1) {3};
+  \node[slot, right=0pt of r3a1]    (r3a2) {};
+  \node[slot, right=0.35cm of r3a2] (r3b1) {5};
+  \node[slot, right=0pt of r3b1]    (r3b2) {};
+  \draw (idx3.center) -- (r3a1);
+  \draw (r3a2.center) -- (r3b1);
+
+  % idx4 (v5): 1, 4, 6
+  \node[slot, right=0.35cm of idx4] (r4a1) {1};
+  \node[slot, right=0pt of r4a1]    (r4a2) {};
+  \node[slot, right=0.35cm of r4a2] (r4b1) {4};
+  \node[slot, right=0pt of r4b1]    (r4b2) {};
+  \node[slot, right=0.35cm of r4b2] (r4c1) {6};
+  \node[slot, right=0pt of r4c1]    (r4c2) {};
+  \draw (idx4.center) -- (r4a1);
+  \draw (r4a2.center) -- (r4b1);
+  \draw (r4b2.center) -- (r4c1);
+
+  % idx5 (v6): 2, 5
+  \node[slot, right=0.35cm of idx5] (r5a1) {2};
+  \node[slot, right=0pt of r5a1]    (r5a2) {};
+  \node[slot, right=0.35cm of r5a2] (r5b1) {5};
+  \node[slot, right=0pt of r5b1]    (r5b2) {};
+  \draw (idx5.center) -- (r5a1);
+  \draw (r5a2.center) -- (r5b1);
+\end{tikzpicture}
+\end{center}
+
+El primer elemento del arreglo de apuntadores representa el vértice \(v_1\). Cada vez que visite los vecinos de un vértice, hágalo en el orden en que aparecen en su lista.
+}
+
+\begin{enumerate}
+  \item (2 décimas) Dibuje el grafo que representan estas listas.
+  \item (1 décimas) ¿El grafo es dirigido?
+  \item (1 décimas) ¿El grafo es ponderado?
+  \item (6 décimas) Ejecute DFS recursivo desde \(v_1\). Para cada paso (cada vez que visite un vértice por primera vez), muestre la pila de llamadas recursivas en ese momento y el arreglo de predecesores actualizado.
+\end{enumerate}
+
+\bigskip

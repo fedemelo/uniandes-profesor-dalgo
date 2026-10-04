@@ -1,0 +1,11 @@
+[pre_parcial]
+name = "1"
+title = "Pre-parcial 1"
+date = "14 de septiembre de 2026"
+versions = ["A", "B"]
+
+# After each question, how the answer space is laid out (see generate_pre_parcial.py).
+[pre_parcial.grid]
+q1 = "own_page"  # long statement: dedicate a whole fresh page to the code grid
+q2 = "blank"     # short trace question: just leave blank space, no grid
+q3 = "inline"    # short statement: grid fits on the same page

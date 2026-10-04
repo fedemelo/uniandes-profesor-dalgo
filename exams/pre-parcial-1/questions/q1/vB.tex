@@ -1,0 +1,14 @@
+\question{25}{Considere $n$ elementos, cada uno con un peso y un valor, y un entero $V$.  
+
+Diseñe un algoritmo de programación dinámica que, dados los pesos, los valores y $V$, determine el peso mínimo de un subconjunto de elementos cuyo valor total sea al menos $V$. Suponga que tal subconjunto existe y que cada elemento se selecciona completo o se descarta por completo.
+
+E.g., para \inline{weight = [3,1,4,2]}, \inline{value = [4,2,5,3]} y $V = 8$, el peso mínimo es $6$, tomando los últimos dos elementos (peso $4+2=6$, valor $5+3=8 \ge 8$).
+}
+
+\begin{enumerate}
+  \item (10 décimas) Defina una relación de recurrencia que resuelva el problema. Explique en palabras qué significa la función y qué significa cada variable. Sea sucinto.
+  \item (5 décimas) Dibuje o describa el grafo de dependencias de la relación de recurrencia. ¿Cuánto espacio requiere como mínimo una solución de programación dinámica para este problema? ¿Se puede optimizar?
+  \item (10 décimas) Implemente una solución de programación dinámica, ya sea bottom-up (tabulación) o top-down (memoización), en Python, Java, C, C++, JavaScript o TypeScript.
+\end{enumerate}
+
+\bigskip

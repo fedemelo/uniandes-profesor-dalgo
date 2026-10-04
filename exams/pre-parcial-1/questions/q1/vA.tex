@@ -1,0 +1,27 @@
+\question{25}{Considere un número $x$, inicialmente igual a $1$, sobre el que se puede aplicar repetidamente una de tres operaciones:
+
+\begin{itemize}
+  \item Multiplicar $x$ por $2$.
+  \item Multiplicar $x$ por $3$.
+  \item Sumarle $1$ a $x$.
+\end{itemize}
+
+Dado un número natural $n$ ($n \ge 1$), encuentre el mínimo número de operaciones necesarias para obtener el número $n$ empezando desde $1$.
+
+E.g.:
+
+\begin{itemize}
+  \item $n=1$: $0$ operaciones ($1$).
+  \item $n=5$: $3$ operaciones ($1, 2, 4, 5$).
+  \item $n=10$: $3$ operaciones ($1, 3, 9, 10$).
+  \item $n=111$: $6$ operaciones ($1, 2, 4, 12, 36, 37, 111$).
+\end{itemize}
+}
+
+\begin{enumerate}
+  \item (10 décimas) Defina una relación de recurrencia que resuelva el problema. Explique en palabras qué significa la función y qué significa cada variable. Sea sucinto.
+  \item (5 décimas) Dibuje o describa el grafo de dependencias de la relación de recurrencia. ¿Cuánto espacio requiere como mínimo una solución de programación dinámica para este problema?
+  \item (10 décimas) Implemente una solución de programación dinámica, ya sea bottom-up (tabulación) o top-down (memoización), en Python, Java, C, C++, JavaScript o TypeScript.
+\end{enumerate}
+
+\bigskip
