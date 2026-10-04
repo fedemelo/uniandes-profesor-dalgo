@@ -8,8 +8,11 @@
 
 % #1: extra height to reserve above the grid (0pt for plain, 1cm for named)
 \newcommand{\@gridbase}[1]{%
-    % Safety margin: one extra cell subtracted to prevent overflow from rounding errors
-    \setlength{\gridautoheight}{\dimexpr\pagegoal-\pagetotal-#1-0.5cm\relax}%
+    % \textheight, not \pagegoal, is the target: \pagegoal is still \maxdimen (unresolved)
+    % when this is the first thing on a fresh page, e.g. right after \newpage, which would
+    % otherwise size the grid to overflow the page into (and past) the footer.
+    % Safety margin: one extra cell subtracted to prevent overflow from rounding errors.
+    \setlength{\gridautoheight}{\dimexpr\textheight-\pagetotal-#1-0.5cm\relax}%
     \pgfmathsetlength{\gridautoheight}{floor(\the\gridautoheight / 0.5cm) * 0.5cm}%
     \nointerlineskip
     \begingroup\setlength{\parskip}{0pt}\hfuzz=0.5pt%
