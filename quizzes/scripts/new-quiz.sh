@@ -33,7 +33,7 @@ fi
 
 mkdir -p "$quiz_dir/tex/quiz" "$quiz_dir/tex/solucion"
 
-cat > "$quiz_dir/tex/problema.tex" <<EOF
+cat > "$quiz_dir/tex/quiz/problema.tex" <<EOF
 \\section{Problema}
 EOF
 
@@ -53,7 +53,7 @@ cat > "$quiz_dir/tex/quiz/$dir_name.tex" <<EOF
 \\begin{document}
 \\makedocheader
 \\quizidentification
-\\input{quizzes/$dir_name/tex/problema}
+\\input{quizzes/$dir_name/tex/quiz/problema}
 \\quizback
 
 \\end{document}
