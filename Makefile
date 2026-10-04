@@ -82,6 +82,30 @@ qz%:
 qzs:
 	$(foreach n,$(QUIZ_NUMS),$(MAKE) qz$(n);)
 
+# Exams draw from exams/exam-<name>/questions/qN/vM.tex per exams/CLAUDE.md, with
+# per-exam settings in exams/exam-<name>/config.toml (shared course settings in
+# exams/config/course.toml). generate.py handles rendering and compiling.
+exam%:
+	python3 exams/generate.py exams/exam-$*/config.toml --compile
+
+# Combined answer key for all of an exam's questions, one per exams/exam-<name>/questions/qN/solucion*.tex.
+# Named "solucionexam%" (not "examsol%") so it doesn't collide with the exam% pattern rule above.
+solucionexam%:
+	$(call compile,exams/exam-$*/questions,exams/exam-$*/output,solucion)
+
+# Pre-parciales (mock exams) draw from exams/pre-parcial-<name>/questions/qN/v{A,B,...}.tex per
+# exams/CLAUDE.md, with per-pre-parcial settings in exams/pre-parcial-<name>/config.toml
+# (course settings shared with exams/config/course.toml). generate_pre_parcial.py renders one
+# static document per version (no shuffling, unlike exam%) and compiles all of them.
+preparcial%:
+	python3 exams/generate_pre_parcial.py exams/pre-parcial-$*/config.toml --compile
+
+# Combined answer key for all versions of a pre-parcial's questions, one per
+# exams/pre-parcial-<name>/questions/qN/solucion*.tex. Named "solucionpreparcial%"
+# for the same reason as "solucionexam%" above.
+solucionpreparcial%:
+	$(call compile,exams/pre-parcial-$*/questions,exams/pre-parcial-$*/output,solucion)
+
 # Projects only have a solution driver: the statement is the coordinator's
 # own proposal document (docx/pdf), not authored here as a tex problema.
 py%:
