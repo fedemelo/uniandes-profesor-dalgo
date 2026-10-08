@@ -1,9 +1,0 @@
-\ejercicio{}
-
-Sea $S$ el conjunto de vértices ya extraídos. Supóngase, hacia una contradicción, que $u$ es el primer vértice extraído con $d[u]$ mayor que el costo $\delta(s, u)$ del camino más corto. Sea $P$ un camino más corto de $s$ a $u$. En el momento de extraer $u$, $P$ empieza en $S$ (pues $s \in S$) y termina fuera, así que tiene un primer vértice $y \notin S$, cuyo predecesor $x$ en $P$ está en $S$.
-
-Cuando se extrajo $x$, $d[x] = \delta(s, x)$ (porque $u$ es el primer vértice mal extraído) y se relajó $(x, y)$, así que $d[y] \le \delta(s, x) + w(x, y) = \delta(s, y)$, es decir, $d[y] = \delta(s, y)$.
-
-Como los pesos son no negativos, el tramo de $P$ que va de $y$ a $u$ cuesta al menos $0$, así que $\delta(s, y) \le \delta(s, u)$. \textbf{Este es el paso que usa la hipótesis.} Entonces $d[y] = \delta(s, y) \le \delta(s, u) < d[u]$, pero Dijkstra eligió $u$ y no $y$, así que $d[u] \le d[y]$. Contradicción. \hfill$\blacksquare$
-
-Con un arco negativo en el tramo de $y$ a $u$, puede pasar que $\delta(s, y) > \delta(s, u)$: un vértice se extrae antes de descubrir un camino más barato que pasa por un vértice extraído después. El ejercicio 3 muestra un caso.
