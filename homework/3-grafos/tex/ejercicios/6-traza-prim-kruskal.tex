@@ -1,0 +1,27 @@
+\ejercicio{1 punto}
+
+Considere el siguiente grafo no dirigido:
+
+\begin{center}
+  \begin{tikzpicture}
+    \input{homework/3-grafos/tex/ejercicios/grafo-nueve-nodos}
+  \end{tikzpicture}
+\end{center}
+
+\begin{enumerate}[label=(\alph*)]
+  \item (0,5 puntos) Ejecute Prim desde $C$. Si necesita romper un empate, use el orden $C$, $A$, $B$, $D$, $E$, $F$, $G$, $H$, $I$. Llene una fila por cada arista que se añade al árbol, en el orden en que se añade.
+  \item (0,5 puntos) Ejecute Kruskal. Llene una fila por cada arista que se añade al árbol, en el orden en que se añade.
+\end{enumerate}
+
+\begin{minipage}[t]{0.48\textwidth}
+  \centering (a) Prim
+  \tablatraza{2}{Paso & Arista & Peso}{1, 2, 3, 4, 5, 6, 7, 8}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \centering (b) Kruskal
+  \tablatraza{2}{Paso & Arista & Peso}{1, 2, 3, 4, 5, 6, 7, 8}
+\end{minipage}
+
+\bigskip
+Peso total del árbol: \rule{3cm}{0.4pt}

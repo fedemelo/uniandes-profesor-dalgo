@@ -1,0 +1,44 @@
+\ejercicio{1,75 puntos}
+
+Considere el siguiente grafo dirigido:
+
+\begin{center}
+  \input{homework/3-grafos/tex/ejercicios/grafo-caminos}
+\end{center}
+
+\begin{enumerate}[label=(\alph*)]
+  \item (0,25 puntos) Ejecute Dijkstra desde $A$. Rompa empates alfabéticamente. Llene una fila por cada extracción, con el vértice extraído y el valor de $d$ justo después de relajar sus arcos.
+
+  \tablatraza{5}{Paso & Extrae & $d[A]$ & $d[B]$ & $d[C]$ & $d[D]$}{1, 2, 3, 4}
+
+  \pagebreak
+
+  \item (0,5 puntos) Ejecute Bellman-Ford desde $A$ relajando los arcos, en cada ronda, en este orden: $B \to D$, $C \to B$, $D \to C$, $D \to A$, $A \to B$, $A \to C$. Llene $d$ al final de cada ronda, incluida la ronda de verificación de ciclos negativos.
+
+  \tablatraza{4}{Ronda & $d[A]$ & $d[B]$ & $d[C]$ & $d[D]$}{1, 2, 3, 4}
+
+  \item (0,25 puntos) Compare los resultados de (a) y (b). ¿Cuál es correcto? ¿En qué paso se equivoca el otro algoritmo y por qué?
+
+  \respuesta[height fill]
+
+  \pagebreak
+
+  \item (0,5 puntos) Ejecute Floyd-Warshall. Las filas son el origen y las columnas el destino. Llene la matriz después de usar cada vértice $k$ como intermedio.
+
+  \begin{center}
+    \matrizfw{$D^{(0)}$}{$0$ & $2$ & $5$ & $\infty$}{$\infty$ & $0$ & $\infty$ & $4$}{$\infty$ & $-4$ & $0$ & $\infty$}{$1$ & $\infty$ & $2$ & $0$}
+    \hspace{0.5cm}
+    \matrizfwvacia{$k = A$}
+    \hspace{0.5cm}
+    \matrizfwvacia{$k = B$}
+
+    \bigskip
+    \matrizfwvacia{$k = C$}
+    \hspace{1cm}
+    \matrizfwvacia{$k = D$}
+  \end{center}
+
+  \item (0,25 puntos) ¿Qué relación hay entre la fila $A$ de la matriz final y el resultado de (b)? Si necesitara las distancias entre todos los pares de vértices de un grafo denso con pesos negativos, ¿usaría Floyd-Warshall o correría Bellman-Ford desde cada vértice? Justifique con la complejidad.
+
+  \respuesta[height fill]
+\end{enumerate}

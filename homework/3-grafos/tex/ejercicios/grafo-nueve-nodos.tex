@@ -1,0 +1,12 @@
+\node[nodo] (A) at (0, 3) {$A$};
+\node[nodo] (B) at (0, 0) {$B$};
+\node[nodo, fill=black!15] (C) at (3, 2.5) {$C$};
+\node[nodo] (D) at (2, 4.5) {$D$};
+\node[nodo] (E) at (5.5, 4.5) {$E$};
+\node[nodo] (F) at (3, 0) {$F$};
+\node[nodo] (G) at (5.5, 0.5) {$G$};
+\node[nodo] (H) at (7.5, 2.8) {$H$};
+\node[nodo] (I) at (8.5, 0) {$I$};
+\foreach \u/\v/\w in {A/B/3, G/H/5, C/D/6, C/E/8, D/E/9, F/G/10, H/I/15, C/F/20, G/I/20, A/D/25, B/F/27, E/F/32, E/H/50, A/C/60} {
+  \draw[thick] (\u) -- node[peso] {$\w$} (\v);
+}

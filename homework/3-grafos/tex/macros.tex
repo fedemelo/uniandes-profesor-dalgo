@@ -1,0 +1,49 @@
+\usepackage{etoolbox}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, backgrounds}
+
+\tikzset{
+  nodo/.style={circle, draw, minimum size=0.75cm, inner sep=0pt},
+  peso/.style={fill=white, inner sep=1.5pt, font=\small},
+  arbol/.style={line width=5pt, black!25, line cap=round},
+}
+
+\newcounter{ejercicio}
+\newcommand{\ejercicio}[2][]{%
+  \stepcounter{ejercicio}%
+  \subsection{Ejercicio \theejercicio\ifstrempty{#1}{}{: #1}\ifstrempty{#2}{}{ (#2)}}%
+}
+
+\newcommand{\respuesta}[1][]{%
+  \begin{tcolorbox}[enhanced, colback=white, colframe=black!40, boxrule=0.4pt, arc=0pt, #1]\end{tcolorbox}%
+}
+
+% #1: columnas por llenar, #2: encabezado, #3: etiquetas de las filas
+\newcommand{\tablatraza}[3]{%
+  \def\tablatrazaceldas{}%
+  \foreach \i in {1,...,#1}{\gappto\tablatrazaceldas{&}}%
+  \def\tablatrazafilas{}%
+  \foreach \etiqueta in {#3}{%
+    \xappto\tablatrazafilas{\etiqueta\noexpand\rule[-0.335cm]{0pt}{0.9cm}\expandonce\tablatrazaceldas\noexpand\\\noexpand\hline}%
+  }%
+  \begin{center}
+    \begin{tabular}{|c|*{#1}{>{\centering\arraybackslash}p{1.7cm}|}}
+      \hline #2 \\ \hline
+      \tablatrazafilas
+    \end{tabular}
+  \end{center}%
+}
+
+% #1: título, #2--#5: filas A--D, con las celdas separadas por &
+\newcommand{\matrizfw}[5]{%
+  \begin{tabular}{c|*{4}{p{0.55cm}|}}
+    \multicolumn{5}{c}{#1} \\[2pt]
+    & \multicolumn{1}{c}{$A$} & \multicolumn{1}{c}{$B$} & \multicolumn{1}{c}{$C$} & \multicolumn{1}{c}{$D$} \\ \cline{2-5}
+    $A$\rule[-0.23cm]{0pt}{0.7cm} & #2 \\ \cline{2-5}
+    $B$\rule[-0.23cm]{0pt}{0.7cm} & #3 \\ \cline{2-5}
+    $C$\rule[-0.23cm]{0pt}{0.7cm} & #4 \\ \cline{2-5}
+    $D$\rule[-0.23cm]{0pt}{0.7cm} & #5 \\ \cline{2-5}
+  \end{tabular}%
+}
+\newcommand{\matrizfwvacia}[1]{\matrizfw{#1}{&&&}{&&&}{&&&}{&&&}}
