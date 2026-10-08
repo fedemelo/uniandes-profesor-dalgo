@@ -1,0 +1,20 @@
+% Enunciado y solución: un grafo con pesos distintos tiene un único MST.
+
+\subsection*{Unicidad del MST con pesos distintos}
+
+\paragraph{Enunciado.}
+Demuestre que un grafo donde todos los pesos son diferentes tiene un único árbol de recubrimiento mínimo.
+
+\paragraph{Solución.}
+Sea $G = (V, E, w)$ un grafo ponderado tal que, para cada par de arcos $e, d \in E$, se cumple que $w(e) \neq w(d)$ si y solo si $e \neq d$.
+
+Supóngase, hacia una contradicción, que $T_1$ y $T_2$ son dos árboles de recubrimiento mínimos de $G$ distintos. Como son distintos, debe haber arcos que están en un árbol y no en el otro; en particular, debe existir al menos un arco $e_1$ que está en $T_1$ y no en $T_2$, y al menos un arco $e_2$ que está en $T_2$ y no en $T_1$.
+
+Se define el conjunto de arcos que están en exactamente uno de los dos árboles:
+\[
+  E' = \{\, e \in E \mid (e \in V(T_1) \land e \notin V(T_2)) \lor (e \notin V(T_1) \land e \in V(T_2)) \,\}.
+\]
+
+Como todos los pesos son diferentes, existe exactamente un arco de peso mínimo en ese conjunto, que se denota por $e_{\min}$, de forma que $w(e_{\min}) < w(e)$ para todo $e \in E' \setminus \{e_{\min}\}$. Sin pérdida de generalidad, se puede suponer que $e_{\min}$ aparece únicamente en $T_1$.
+
+Como $T_2$ es maximalmente acíclico, $T_2 \cup \{e_{\min}\}$ contiene un ciclo. Por ende, $T' = T_2 \cup \{e_{\min}\} \setminus \{e_2\}$ es un árbol de recubrimiento. Sin embargo, como $w(e_{\min}) < w(e_2)$, $T'$ es un árbol de recubrimiento con una suma de pesos menor que la de $T_2$. Esto contradice la suposición de que $T_2$ es mínimo, por lo cual no pueden existir dos árboles de recubrimiento mínimos de $G$ distintos. \hfill$\blacksquare$
