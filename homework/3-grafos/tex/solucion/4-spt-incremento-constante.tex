@@ -1,0 +1,9 @@
+\ejercicio{}
+
+\begin{enumerate}[label=(\alph*)]
+  \item No necesariamente. Si un camino $P$ tiene $\ell$ aristas, su costo aumenta en $\ell k$, así que los caminos con más aristas se encarecen más que los que tienen menos. Un camino más corto con muchas aristas puede dejar de serlo frente a uno con menos aristas.
+
+  Ejemplo: el triángulo con $c(v_0, a) = 1$, $c(a, b) = 1$ y $c(v_0, b) = 3$. El camino más corto a $b$ es $v_0, a, b$, de costo $2$, así que $T = \{v_0a, ab\}$. Con $k = 2$, ese camino cuesta $3 + 3 = 6$, mientras que la arista directa cuesta $5$. El nuevo árbol es $\{v_0a, v_0b\}$.
+
+  \item Sí. Todo árbol de recubrimiento tiene exactamente $n - 1$ aristas, así que el costo de cada uno aumenta en la misma cantidad, $(n - 1)k$. El orden entre los árboles no cambia y el de costo mínimo sigue siendo $M$. En el ejemplo anterior, $\{v_0a, ab\}$ es el MST antes y después del incremento, aunque deja de ser el árbol de caminos más cortos.
+\end{enumerate}

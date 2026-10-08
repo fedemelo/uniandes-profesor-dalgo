@@ -1,0 +1,5 @@
+\ejercicio{}
+
+El procedimiento es incorrecto: el árbol de recubrimiento mínimo minimiza el peso total del árbol, no la distancia desde la fuente a cada vértice.
+
+Contraejemplo: el triángulo con $c(s, a) = 2$, $c(a, b) = 2$ y $c(s, b) = 3$, con fuente $s$. El único MST es $\{sa, ab\}$, de peso $4$. Según el procedimiento, el camino de $s$ a $b$ sería $s, a, b$, de costo $4$, pero la arista directa $sb$ cuesta $3$.

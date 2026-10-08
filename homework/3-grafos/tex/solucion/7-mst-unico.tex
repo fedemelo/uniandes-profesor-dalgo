@@ -1,0 +1,11 @@
+\ejercicio{}
+
+\begin{enumerate}[label=(\alph*)]
+  \item Sea $G = (V, E, w)$ un grafo conexo con todos los pesos diferentes. Supóngase, hacia una contradicción, que $T_1$ y $T_2$ son dos árboles de recubrimiento mínimos distintos. Sea $E'$ el conjunto de aristas que están en exactamente uno de los dos árboles, que no es vacío porque los árboles son distintos. Como los pesos son diferentes, $E'$ tiene una única arista de peso mínimo, $e_{\min}$. Sin pérdida de generalidad, $e_{\min} \in T_1$.
+
+  Como $T_2$ es un árbol de recubrimiento, $T_2 \cup \{e_{\min}\}$ contiene exactamente un ciclo. Ese ciclo tiene alguna arista $e'$ que no está en $T_1$, porque de lo contrario $T_1$ contendría un ciclo. Entonces $e' \in T_2 \setminus T_1 \subseteq E'$ y $e' \neq e_{\min}$, así que $w(e_{\min}) < w(e')$.
+
+  Quitar $e'$ rompe el ciclo sin desconectar el grafo, así que $T' = T_2 \cup \{e_{\min}\} \setminus \{e'\}$ es un árbol de recubrimiento con $w(T') = w(T_2) + w(e_{\min}) - w(e') < w(T_2)$. Esto contradice que $T_2$ sea mínimo. \hfill$\blacksquare$
+
+  \item No. El grafo del ejercicio 4 tiene dos aristas de peso $20$, $C$--$F$ y $G$--$I$, y aun así tiene un único MST: sin importar en qué orden Kruskal las considere, $G$--$I$ cierra el ciclo $G, H, I$ y $C$--$F$ es la única forma de unir $\{C, D, E\}$ con $\{F, G, H, I\}$ a ese costo. Un ejemplo más simple es cualquier árbol con pesos repetidos: su único árbol de recubrimiento es él mismo.
+\end{enumerate}

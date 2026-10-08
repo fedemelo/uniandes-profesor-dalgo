@@ -1,0 +1,50 @@
+\ejercicio{}
+
+\begin{minipage}[t]{0.48\textwidth}
+  \centering (a) Prim
+  \begin{center}
+    \begin{tabular}{|c|c|c|}
+      \hline
+      Paso & Arista & Peso \\ \hline
+      1 & $C$--$D$ & $6$ \\ \hline
+      2 & $C$--$E$ & $8$ \\ \hline
+      3 & $C$--$F$ & $20$ \\ \hline
+      4 & $F$--$G$ & $10$ \\ \hline
+      5 & $G$--$H$ & $5$ \\ \hline
+      6 & $H$--$I$ & $15$ \\ \hline
+      7 & $A$--$D$ & $25$ \\ \hline
+      8 & $A$--$B$ & $3$ \\ \hline
+    \end{tabular}
+  \end{center}
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \centering (b) Kruskal
+  \begin{center}
+    \begin{tabular}{|c|c|c|}
+      \hline
+      Paso & Arista & Peso \\ \hline
+      1 & $A$--$B$ & $3$ \\ \hline
+      2 & $G$--$H$ & $5$ \\ \hline
+      3 & $C$--$D$ & $6$ \\ \hline
+      4 & $C$--$E$ & $8$ \\ \hline
+      5 & $F$--$G$ & $10$ \\ \hline
+      6 & $H$--$I$ & $15$ \\ \hline
+      7 & $C$--$F$ & $20$ \\ \hline
+      8 & $A$--$D$ & $25$ \\ \hline
+    \end{tabular}
+  \end{center}
+\end{minipage}
+
+Kruskal descarta $D$--$E$ ($9$), $G$--$I$ ($20$), $B$--$F$, $E$--$F$, $E$--$H$ y $A$--$C$ porque cerrarían un ciclo. Ambos algoritmos llegan al mismo árbol, de peso total $92$, en distinto orden:
+
+\begin{center}
+  \begin{tikzpicture}
+    \input{homework/3-grafos/tex/ejercicios/grafo-nueve-nodos}
+    \begin{scope}[on background layer]
+      \foreach \u/\v in {A/B, G/H, C/D, C/E, F/G, H/I, C/F, A/D} {
+        \draw[arbol] (\u) -- (\v);
+      }
+    \end{scope}
+  \end{tikzpicture}
+\end{center}

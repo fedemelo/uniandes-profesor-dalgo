@@ -1,0 +1,46 @@
+\ejercicio{}
+
+\begin{enumerate}[label=(\alph*)]
+  \item
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|c|}
+      \hline
+      Paso & Extrae & $d[A]$ & $d[B]$ & $d[C]$ & $d[D]$ \\ \hline
+      1 & $A$ & $0$ & $2$ & $5$ & $\infty$ \\ \hline
+      2 & $B$ & $0$ & $2$ & $5$ & $6$ \\ \hline
+      3 & $C$ & $0$ & $1$ & $5$ & $6$ \\ \hline
+      4 & $D$ & $0$ & $1$ & $5$ & $6$ \\ \hline
+    \end{tabular}
+  \end{center}
+  Al extraer $C$, la relajación $C \to B$ baja $d[B]$ a $5 - 4 = 1$, aunque $B$ ya había sido extraído. Como $B$ ya no está en la cola, no se vuelve a extraer y sus arcos no se vuelven a relajar.
+
+  \item
+  \begin{center}
+    \begin{tabular}{|c|c|c|c|c|}
+      \hline
+      Ronda & $d[A]$ & $d[B]$ & $d[C]$ & $d[D]$ \\ \hline
+      1 & $0$ & $2$ & $5$ & $\infty$ \\ \hline
+      2 & $0$ & $1$ & $5$ & $6$ \\ \hline
+      3 & $0$ & $1$ & $5$ & $5$ \\ \hline
+      4 & $0$ & $1$ & $5$ & $5$ \\ \hline
+    \end{tabular}
+  \end{center}
+  La ronda 4 no cambia nada, así que no hay ciclos negativos alcanzables desde $A$. Con este orden de arcos se necesitan las $n - 1 = 3$ rondas completas.
+
+  \item Bellman-Ford es correcto: $\delta(A, B) = 1$ por $A \to C \to B$ y $\delta(A, D) = 5$ por $A \to C \to B \to D$. Dijkstra se equivoca al extraer $B$ con $d[B] = 2$: supone que ningún camino que pase por un vértice aún no extraído puede ser más barato, lo cual solo vale con pesos no negativos. Al extraer $C$ corrige $d[B]$ a $1$, pero ya relajó $B \to D$ con el valor viejo, así que $d[D]$ queda en $6$ en lugar de $5$.
+
+  \item En negrita, las entradas que cambian en cada paso.
+  \begin{center}
+    \matrizfw{$k = A$}{$0$ & $2$ & $5$ & $\infty$}{$\infty$ & $0$ & $\infty$ & $4$}{$\infty$ & $-4$ & $0$ & $\infty$}{$1$ & $\mathbf{3}$ & $2$ & $0$}
+    \hspace{1cm}
+    \matrizfw{$k = B$}{$0$ & $2$ & $5$ & $\mathbf{6}$}{$\infty$ & $0$ & $\infty$ & $4$}{$\infty$ & $-4$ & $0$ & $\mathbf{0}$}{$1$ & $3$ & $2$ & $0$}
+
+    \bigskip
+    \matrizfw{$k = C$}{$0$ & $\mathbf{1}$ & $5$ & $\mathbf{5}$}{$\infty$ & $0$ & $\infty$ & $4$}{$\infty$ & $-4$ & $0$ & $0$}{$1$ & $\mathbf{-2}$ & $2$ & $0$}
+    \hspace{1cm}
+    \matrizfw{$k = D$}{$0$ & $1$ & $5$ & $5$}{$\mathbf{5}$ & $0$ & $\mathbf{6}$ & $4$}{$\mathbf{1}$ & $-4$ & $0$ & $0$}{$1$ & $-2$ & $2$ & $0$}
+  \end{center}
+  La diagonal queda en cero, lo que confirma que no hay ciclos negativos.
+
+  \item La fila $A$ de la matriz final, $[0, 1, 5, 5]$, coincide con el resultado de Bellman-Ford desde $A$: Floyd-Warshall resuelve el problema desde todos los orígenes a la vez. Floyd-Warshall cuesta $O(n^3)$. Correr Bellman-Ford desde cada vértice cuesta $n \cdot O(n\varepsilon) = O(n^2 \varepsilon)$, que en un grafo denso ($\varepsilon \in \Theta(n^2)$) es $O(n^4)$. Conviene Floyd-Warshall.
+\end{enumerate}
