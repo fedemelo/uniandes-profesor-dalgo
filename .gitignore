@@ -323,3 +323,6 @@ proyectos/
 material-pasado/
 
 .claude/worktrees/
+
+# Student roster (names to codes); never commit
+estudiantes/
