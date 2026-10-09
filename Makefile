@@ -26,12 +26,13 @@ endef
 # course-docs / announcements: target name -> directory holding its .tex
 DOC_DIR_policies         := course-docs/policies
 DOC_DIR_grupos           := course-docs/grupos
+DOC_DIR_bonos            := course-docs/bonos
 DOC_DIR_consejos         := announcements
 DOC_DIR_math-docs        := course-docs/math-docs
 DOC_DIR_latex-intro      := course-docs/latex-intro
 DOC_DIR_std-input-output := course-docs/std-input-output
 
-SIMPLE_DOCS := policies grupos consejos std-input-output
+SIMPLE_DOCS := policies grupos bonos consejos std-input-output
 BIBER_DOCS  := math-docs latex-intro
 
 # homework/N-slug/ -> N, derived from each directory's numeric prefix
