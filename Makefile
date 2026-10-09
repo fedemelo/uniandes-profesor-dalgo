@@ -119,6 +119,11 @@ pys:
 # Renders it to HTML and pushes that onto the clipboard
 # as rich text), so pasting into Brightspace's editor works
 
+# Reviews (any .md under a reviews/ directory) are written as plain text:
+# every newline is meant as a line break and lists follow their heading line
+# directly. Announcements are real markdown, where those would change output.
+REVIEW_MARKDOWN := markdown+hard_line_breaks+lists_without_preceding_blankline
+
 # VS Code's terminal drag sometimes drops the '&' from filenames, so if the
 # exact path doesn't exist, fall back to matching a .md file in the same
 # directory whose name is identical once all '&' are stripped from both.
@@ -135,11 +140,12 @@ FORCE:
 			[ -f "$$f" ] || continue; \
 			if [ "$$(basename "$$f" | tr -d '&')" = "$$wanted" ]; then match="$$f"; break; fi; \
 		done; \
-		if [ -z "$$match" ]; then echo "No announcement matches $$target (even ignoring '&')" >&2; exit 1; fi; \
+		if [ -z "$$match" ]; then echo "No markdown file matches $$target (even ignoring '&')" >&2; exit 1; fi; \
 		target="$$match"; \
 	fi; \
 	html="/tmp/$$(basename "$${target%.md}").html"; \
-	pandoc "$$target" -o "$$html" --standalone; \
+	case "$$target" in */reviews/*) from="$(REVIEW_MARKDOWN)";; *) from=markdown;; esac; \
+	pandoc "$$target" -f "$$from" --mathml -o "$$html" --standalone; \
 	osascript -e "set the clipboard to (read (POSIX file \"$$html\") as «class HTML»)"; \
 	echo "Copied '$$target' as rich text to clipboard"
 
