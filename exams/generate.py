@@ -329,6 +329,10 @@ def format_exam_id(index: int, total: int) -> str:
     return str(index + 1).zfill(width)
 
 
+def exam_title_line(title: str, exam_id: str, semester: str) -> str:
+    return f"\\title{{{title} {exam_id} -- {semester}}}"
+
+
 def render_all_exams_tex(
     assignments: list[ExamAssignment],
     config: dict,
@@ -347,7 +351,7 @@ def render_all_exams_tex(
         lines.append(f"\\input{{{preamble_path}}}")
 
     lines.append("")
-    lines.append(f"\\title{{{exam_cfg['title']}, ejemplar {format_exam_id(0, num_students)} -- {semester}}}")
+    lines.append(exam_title_line(exam_cfg["title"], format_exam_id(0, num_students), semester))
     lines.append(f"\\examdate{{{exam_cfg['date']}}}")
     lines.append("")
     lines.append(r"\begin{document}")
@@ -362,9 +366,7 @@ def render_all_exams_tex(
             lines.append(r"\cleartoeven")
             lines.append(r"\setcounter{questioncounter}{0}")
             lines.append(r"\setcounter{page}{1}")
-            lines.append(
-                f"\\title{{{exam_cfg['title']} {exam_id} -- {semester}}}"
-            )
+            lines.append(exam_title_line(exam_cfg["title"], exam_id, semester))
 
         lines.append(r"\makeexamheader")
         lines.append("")
