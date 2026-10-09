@@ -70,7 +70,7 @@ homework_solucion_src = $(if $(wildcard $(1)/tex/solucion),$(1)/tex/solucion,$(1
 
 hw%:
 	$(call compile,$(call homework_tarea_src,$(HOMEWORK_DIR_$*)),$(HOMEWORK_DIR_$*),$(notdir $(HOMEWORK_DIR_$*)))
-	$(call compile,$(call homework_solucion_src,$(HOMEWORK_DIR_$*)),$(HOMEWORK_DIR_$*),$(notdir $(HOMEWORK_DIR_$*))-solucion)
+	$(if $(wildcard $(call homework_solucion_src,$(HOMEWORK_DIR_$*))/$(notdir $(HOMEWORK_DIR_$*))-solucion.tex),$(call compile,$(call homework_solucion_src,$(HOMEWORK_DIR_$*)),$(HOMEWORK_DIR_$*),$(notdir $(HOMEWORK_DIR_$*))-solucion))
 
 hws:
 	$(foreach n,$(HOMEWORK_NUMS),$(MAKE) hw$(n);)
