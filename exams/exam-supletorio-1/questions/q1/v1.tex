@@ -1,0 +1,20 @@
+\question{25}{
+Una fundación necesita reunir \emph{al menos} $P \ge 0$ kilos de alimentos. Hay $n$ donantes: el donante $i$ entrega exactamente $a_i \ge 1$ kilos, y recoger su donación le cuesta a la fundación $c_i \ge 0$ pesos de transporte. Cada donante se visita a lo sumo una vez y su donación se recoge completa o no se recoge. Determine el costo mínimo para reunir al menos $P$ kilos, o determine que no es posible.
+
+E.g., con $n=4$, $a = (4, 3, 5, 2)$ y $c = (7, 4, 8, 3)$:
+\begin{itemize}
+  \item $P=0$: $0$ (no se visita a nadie).
+  \item $P=6$: $10$ (donantes $1$ y $4$: $6$ kilos).
+  \item $P=9$: $14$ (donantes $1$, $2$ y $4$: $9$ kilos).
+  \item $P=12$: $19$ (donantes $1$, $2$ y $3$: $12$ kilos).
+  \item $P=15$: No es posible.
+\end{itemize}
+}
+
+\begin{enumerate}
+  \item (10 décimas) Defina una relación de recurrencia que resuelva el problema. Explique en palabras qué significa la función y qué significa cada variable. Sea sucinto.
+  \item (5 décimas) Dibuje y explique el grafo de dependencias. Determine cuál será la complejidad espacial de su solución.
+  \item (10 décimas) Implemente una solución de programación dinámica, ya sea bottom-up o top-down, en Python, Java, C, C++, JavaScript o TypeScript. Determine la complejidad temporal de su solución.
+\end{enumerate}
+
+\bigskip
