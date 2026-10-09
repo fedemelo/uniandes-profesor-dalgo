@@ -1,0 +1,12 @@
+[exam]
+name = "supletorio-1"
+title = "Supletorio examen parcial 1"
+date = "7 de octubre de 2026"
+num_students = 2
+seed = 0
+
+# After each question, how the answer space is laid out (see scripts/latex_gen.py).
+[exam.grid]
+q1 = "own_page"  # long statement: dedicate a whole fresh page to the code grid
+q2 = "blank"     # short trace question: just leave blank space, no grid
+q3 = "blank"     # prose/justification answer: fresh page of blank space, no grid
