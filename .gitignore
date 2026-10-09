@@ -320,3 +320,6 @@ ignore/
 
 books/
 proyectos/
+material-pasado/
+
+.claude/worktrees/
